@@ -1,8 +1,13 @@
+using HospitalSanJose.Models;
+using Microsoft.EntityFrameworkCore;
+using static K4os.Compression.LZ4.Engine.Pubternal;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddDbContext<HospitalDbContext>(options =>
+                    options.UseMySQL(connectionString: builder.Configuration.GetConnectionString("HospitalDB")));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

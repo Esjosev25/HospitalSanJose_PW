@@ -21,8 +21,6 @@ public partial class Consultation
 
     public string? Diagnosis { get; set; }
 
-    public string? Treatment { get; set; }
-
     public virtual Appointment Appointment { get; set; } = null!;
 
     public virtual Doctor Doctor { get; set; } = null!;

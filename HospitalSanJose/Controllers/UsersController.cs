@@ -9,87 +9,87 @@ using HospitalSanJose.Models;
 
 namespace HospitalSanJose.Controllers
 {
-    public class RolesController : Controller
+    public class UsersController : Controller
     {
         private readonly HospitalDbContext _context;
 
-        public RolesController(HospitalDbContext context)
+        public UsersController(HospitalDbContext context)
         {
             _context = context;
         }
 
-        // GET: Roles
+        // GET: Users
         public async Task<IActionResult> Index()
         {
-              return _context.Roles != null ? 
-                          View(await _context.Roles.ToListAsync()) :
-                          Problem("Entity set 'HospitalDbContext.Roles'  is null.");
+              return _context.Users != null ? 
+                          View(await _context.Users.ToListAsync()) :
+                          Problem("Entity set 'HospitalDbContext.Users'  is null.");
         }
 
-        // GET: Roles/Details/5
+        // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Roles == null)
+            if (id == null || _context.Users == null)
             {
                 return NotFound();
             }
 
-            var role = await _context.Roles
+            var user = await _context.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (role == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return View(role);
+            return View(user);
         }
 
-        // GET: Roles/Create
+        // GET: Users/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Roles/Create
+        // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Role role)
+        public async Task<IActionResult> Create([Bind("Id,Password,NeedChangePassword,Email,FirstName,LastName,Image,Deleted,Activated,Username,IsLocked")] User user)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(role);
+                _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(role);
+            return View(user);
         }
 
-        // GET: Roles/Edit/5
+        // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Roles == null)
+            if (id == null || _context.Users == null)
             {
                 return NotFound();
             }
 
-            var role = await _context.Roles.FindAsync(id);
-            if (role == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
-            return View(role);
+            return View(user);
         }
 
-        // POST: Roles/Edit/5
+        // POST: Users/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Role role)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Password,NeedChangePassword,Email,FirstName,LastName,Image,Deleted,Activated,Username,IsLocked")] User user)
         {
-            if (id != role.Id)
+            if (id != user.Id)
             {
                 return NotFound();
             }
@@ -98,12 +98,12 @@ namespace HospitalSanJose.Controllers
             {
                 try
                 {
-                    _context.Update(role);
+                    _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RoleExists(role.Id))
+                    if (!UserExists(user.Id))
                     {
                         return NotFound();
                     }
@@ -114,49 +114,49 @@ namespace HospitalSanJose.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(role);
+            return View(user);
         }
 
-        // GET: Roles/Delete/5
+        // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Roles == null)
+            if (id == null || _context.Users == null)
             {
                 return NotFound();
             }
 
-            var role = await _context.Roles
+            var user = await _context.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (role == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return View(role);
+            return View(user);
         }
 
-        // POST: Roles/Delete/5
+        // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Roles == null)
+            if (_context.Users == null)
             {
-                return Problem("Entity set 'HospitalDbContext.Roles'  is null.");
+                return Problem("Entity set 'HospitalDbContext.Users'  is null.");
             }
-            var role = await _context.Roles.FindAsync(id);
-            if (role != null)
+            var user = await _context.Users.FindAsync(id);
+            if (user != null)
             {
-                _context.Roles.Remove(role);
+                _context.Users.Remove(user);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RoleExists(int id)
+        private bool UserExists(int id)
         {
-          return (_context.Roles?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

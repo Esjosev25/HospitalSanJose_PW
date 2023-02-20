@@ -7,6 +7,8 @@ public partial class PersonalInfo
 {
     public int Id { get; set; }
 
+    public int UserId { get; set; }
+
     public string Dpi { get; set; } = null!;
 
     public string PhoneNumber1 { get; set; } = null!;
@@ -23,5 +25,5 @@ public partial class PersonalInfo
 
     public string? City { get; set; }
 
-    public virtual ICollection<User> Users { get; } = new List<User>();
+    public virtual User User { get; set; } = null!;
 }
