@@ -4,7 +4,20 @@
 @{
 }
 
-<div class="alert alert-primary alert-dismissible fade show" role="alert">
+<div class=" fixed-top text-center alert alert-primary alert-dismissible fadeIn show" role="alert">
     A simple primary alert—check it out!
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
+
+<script>
+    const element = document.querySelector('.dynamic-color');
+    element.style.setProperty('--main-color', '#FF0000');
+</script>
+
+<script>
+    window.setTimeout(function () {
+        $(".alert").fadeTo(500, 0).slideUp(500, function () {
+            $(this).remove();
+        });
+    }, 4000);
+</script>

@@ -1,6 +1,10 @@
-﻿@model User
-@{
-    ViewData["Title"] = "Register"; Layout = "~/Views/Auth/_Layout.cshtml";
+﻿@{
+    ViewData["Title"] = "Register"; 
+    Layout = "~/Views/Auth/_Layout.cshtml";
+    var showWarning = ViewBag.ShowWarning ?? false;
+    var alertMessage = ViewBag.AlertMessage ?? "";
+    var alertIcon = ViewBag.AlertIcon ?? "warning";
+    var alertTitle = ViewBag.AlertTitle ?? "";
 }
 
 <div class="container">
@@ -28,7 +32,7 @@
                     <form class="row g-3 needs-validation" asp-action="Register" method="post"
                           novalidate>
                         <div class="col-md-6">
-                            <label asp-for="FirstName"
+                            <label 
                                    class="form-label">First Name</label>
                             <input type="text"
                                    name="firstName"
@@ -38,7 +42,7 @@
                             <div class="invalid-feedback">Please, enter your name!</div>
                         </div>
                         <div class="col-md-6">
-                            <label asp-for="LastName"
+                            <label 
                                    class="form-label">Last Name</label>
                             <input type="text"
                                    name="LastName"
@@ -48,7 +52,7 @@
                             <div class="invalid-feedback">Please, enter your name!</div>
                         </div>
                         <div class="col-12">
-                            <label asp-for="Email"
+                            <label 
                                    class="form-label">Email</label>
                             <input type="email"
                                    name="email"
@@ -61,7 +65,7 @@
                         </div>
 
                         <div class="col-12">
-                            <label asp-for="Username"
+                            <label 
                                    class="form-label">Username</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text"
@@ -76,7 +80,7 @@
                         </div>
 
                         <div class="col-12">
-                            <label asp-for="Password"
+                            <label 
                                    class="form-label">Password</label>
                             <input type="password"
                                    name="password1"
@@ -86,7 +90,7 @@
                             <div class="invalid-feedback">Please enter your password!</div>
                         </div>
                         <div class="col-12">
-                            <label asp-for="Password"
+                            <label 
                                    class="form-label">Confirm your Password</label>
                             <input type="password"
                                    name="password2"
@@ -138,3 +142,13 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="~/js/sweetAlert.js"></script>
+
+@if (showWarning)
+{
+    <script>
+        showAlert('@alertTitle', '@alertMessage', '@alertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));
+    </script>
+}

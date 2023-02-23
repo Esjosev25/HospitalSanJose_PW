@@ -1,13 +1,7 @@
-﻿using HospitalSanJose.Models;
+﻿using HospitalSanJose.DTO;
+using HospitalSanJose.Models;
 using HospitalSanJose.Models.Auth;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration.UserSecrets;
-using NuGet.Common;
-using System.Security.Cryptography;
-using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HospitalSanJose.Controllers
 {
@@ -24,51 +18,60 @@ namespace HospitalSanJose.Controllers
 
         public IActionResult Login()
         {
-            ViewBag.ShowWarning = false;
-            return View("Login/Index");
+
+            return View("Login");
         }
 
         public IActionResult Register()
         {
-            return View("Register/Index");
+            return View("Register");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Login(Login formData)
         {
-            ViewBag.ShowWarning = false;
+            var userDto = new UserDto
+            {
+                ShowWarning = true,
+                AlertTitle = "Aviso",
+                AlertMessage = "Error en iniciar sesion",
+                AlertIcon = "error",
+            };
+
             if (!ModelState.IsValid)
                 // If the model state is invalid, redisplay the form
-                return View("Login/Index");
+                return View(userDto);
 
             // Look up the user in the database
             var user = _context.Users.FirstOrDefault(u => u.Username == formData.Username);
 
             if (user == null || user.Deleted)
             {
-                ModelState.AddModelError("InvalidCredentials", "Invalid email or password");
-                ViewBag.ShowWarning = true;
-                return View("Login/Index");
+                userDto.AlertIcon = "error";
+
+                return View(userDto);
             }
 
             if (user.IsLocked)
             {
-                ModelState.AddModelError("UserLocked", "User has been locked");
-                ViewBag.ShowWarning = true;
-                return View("Login/Index");
+                userDto.AlertMessage = "Usuario bloqueado";
+                return View(userDto);
             }
+
+
             if (BCrypt.Net.BCrypt.Verify(formData.Password, user.Password))
             {
                 // Set a cookie to indicate that the user is logged in
                 HttpContext.Response.Cookies.Append("loggedIn", "true");
-                ViewBag.ShowWarning = false;
+                userDto.ShowWarning = false;
                 // Redirect to the home page
                 return RedirectToAction("Index", "Home");
             }
 
 
-            return View("Login/Index");
+
+            return View(userDto);
 
         }
 
@@ -80,14 +83,25 @@ namespace HospitalSanJose.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(Register formData)
         {
+            ViewBag.ShowWarning = true;
+            ViewBag.alertTitle = "Aviso";
+            ViewBag.AlertMessage = "Usuario ya existente";
+            ViewBag.alertIcon = "error";
             if (!ModelState.IsValid)
                 // If the model state is invalid, redisplay the form
-                return View("Register/Index");
+                return View("Register");
+            var userDB = _context.Users.FirstOrDefault(u => u.Username == formData.Username || u.Email == formData.Email);
+            if (userDB != null)
+                return View("Register");
 
             if (!formData.Password1.Equals(formData.Password2))
+            {
                 // Agregar alerta en caso que no hagan match las psw
-                return View("Register/Index");
-
+                ViewBag.alertIcon = "warning";
+                ViewBag.AlertMessage = "Tus contraseñas deben de coincidir";
+                return View("Register");
+            }
+            ViewBag.ShowWarning = false;
             var user = new User();
             // Call the Register method to set its properties
             user.Register(formData);

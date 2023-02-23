@@ -1,3 +1,4 @@
+using CurrieTechnologies.Razor.SweetAlert2;
 using HospitalSanJose.Models;
 using Microsoft.EntityFrameworkCore;
 using static K4os.Compression.LZ4.Engine.Pubternal;
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<HospitalDbContext>(options =>
                     options.UseMySQL(connectionString: builder.Configuration.GetConnectionString("HospitalDB")));
+builder.Services.AddSweetAlert2();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
