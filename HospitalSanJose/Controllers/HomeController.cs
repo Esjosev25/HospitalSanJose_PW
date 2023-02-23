@@ -17,8 +17,18 @@ namespace HospitalSanJose.Controllers
         {
             return View();
         }
+    [Route("about")]
+    public IActionResult About()
+    {
+      return View();
+    }
+    public IActionResult Contact()
+    {
+      return View();
+    }
 
-        public IActionResult Privacy()
+
+    public IActionResult Privacy()
         {
             return View();
         }

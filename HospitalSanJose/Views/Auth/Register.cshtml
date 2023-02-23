@@ -1,10 +1,8 @@
-﻿@{
+﻿@using HospitalSanJose.DTO
+@model UserDto
+@{
     ViewData["Title"] = "Register"; 
     Layout = "~/Views/Auth/_Layout.cshtml";
-    var showWarning = ViewBag.ShowWarning ?? false;
-    var alertMessage = ViewBag.AlertMessage ?? "";
-    var alertIcon = ViewBag.AlertIcon ?? "warning";
-    var alertTitle = ViewBag.AlertTitle ?? "";
 }
 
 <div class="container">
@@ -23,9 +21,9 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <div class="pt-4 pb-2">
-                        <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
+                        <h5 class="card-title text-center pb-0 fs-4">Crea tu cuenta</h5>
                         <p class="text-center small">
-                            Enter your personal details to create account
+                            Ingresa tu informacion personal
                         </p>
                     </div>
 
@@ -33,40 +31,40 @@
                           novalidate>
                         <div class="col-md-6">
                             <label 
-                                   class="form-label">First Name</label>
+                                   class="form-label">Nombre</label>
                             <input type="text"
                                    name="firstName"
                                    class="form-control"
                                    id="firstName"
                                    required />
-                            <div class="invalid-feedback">Please, enter your name!</div>
+                            <div class="invalid-feedback">Por favor ingresa tu nombre!</div>
                         </div>
                         <div class="col-md-6">
                             <label 
-                                   class="form-label">Last Name</label>
+                                   class="form-label">Apellido</label>
                             <input type="text"
                                    name="LastName"
                                    class="form-control"
                                    id="LastName"
                                    required />
-                            <div class="invalid-feedback">Please, enter your name!</div>
+                            <div class="invalid-feedback">Por favor ingresa tu Apellido!</div>
                         </div>
                         <div class="col-12">
                             <label 
-                                   class="form-label">Email</label>
+                                   class="form-label">Correo</label>
                             <input type="email"
                                    name="email"
                                    class="form-control"
                                    id="email"
                                    required />
                             <div class="invalid-feedback">
-                                Please enter a valid Email adddress!
+                                Por favor ingresa un correo valido!
                             </div>
                         </div>
 
                         <div class="col-12">
                             <label 
-                                   class="form-label">Username</label>
+                                   class="form-label">Usuario</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text"
                                       id="inputGroupPrepend">@@</span>
@@ -75,7 +73,7 @@
                                        class="form-control"
                                        id="username"
                                        required />
-                                <div class="invalid-feedback">Please choose a username.</div>
+                                <div class="invalid-feedback">Por favor ingresa tu usuario.</div>
                             </div>
                         </div>
 
@@ -87,45 +85,27 @@
                                    class="form-control"
                                    id="password1"
                                    required />
-                            <div class="invalid-feedback">Please enter your password!</div>
+                            <div class="invalid-feedback">Por favor ingresa tu password!</div>
                         </div>
                         <div class="col-12">
                             <label 
-                                   class="form-label">Confirm your Password</label>
+                                   class="form-label">Confirma tu Password</label>
                             <input type="password"
                                    name="password2"
                                    class="form-control"
                                    id="password2"
                                    required />
-                            <div class="invalid-feedback">Please enter your password!</div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       name="terms"
-                                       type="checkbox"
-                                       value=""
-                                       id="acceptTerms"
-                                       required />
-                                <label class="form-check-label"
-                                       for="acceptTerms">
-                                    I agree and accept the
-                                    <a href="#">terms and conditions</a>
-                                </label>
-                                <div class="invalid-feedback">
-                                    You must agree before submitting.
-                                </div>
-                            </div>
+                            <div class="invalid-feedback">Por favor ingresa tu password!</div>
                         </div>
                         <div class="col-12">
                             <button class="btn btn-primary w-100"
                                     type="submit">
-                                Create Account
+                                Crear Cuenta
                             </button>
                         </div>
                         <div class="col-12">
                             <p class="small mb-0">
-                                Already have an account? <a href="pages-login.html">Log in</a>
+                                Ya posees una cuenta? <a href="/auth/login">Log in</a>
                             </p>
                         </div>
                     </form>
@@ -146,9 +126,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="~/js/sweetAlert.js"></script>
 
-@if (showWarning)
+@if (Model != null && Model.ShowWarning )
 {
     <script>
-        showAlert('@alertTitle', '@alertMessage', '@alertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));
+        showAlert('@Model.AlertTitle', '@Model.AlertMessage', '@Model.AlertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));
     </script>
 }
