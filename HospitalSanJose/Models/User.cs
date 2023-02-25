@@ -1,6 +1,7 @@
 ﻿using HospitalSanJose.Models.Auth;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace HospitalSanJose.Models;
 
@@ -18,16 +19,20 @@ public partial class User
     this.LastName = register.LastName;
     this.Username = register.Username;
   }
+  
   public int Id { get; set; }
-
   public string Password { get; set; } = null!;
 
+  [DisplayName("Cambio de Contraseña")]
   public bool? NeedChangePassword { get; set; }
 
+  [DisplayName("Correo")]
   public string Email { get; set; } = null!;
 
+  [DisplayName("Nombre")]
   public string FirstName { get; set; } = null!;
 
+  [DisplayName("Apellido")]
   public string LastName { get; set; } = null!;
 
   public byte[]? Image { get; set; }

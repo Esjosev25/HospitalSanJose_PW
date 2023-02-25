@@ -9,89 +9,90 @@ using HospitalSanJose.Models;
 
 namespace HospitalSanJose.Controllers
 {
-    public class UsersController : Controller
+    public class PersonalInfoesController : Controller
     {
         private readonly HospitalDbContext _context;
 
-        public UsersController(HospitalDbContext context)
+        public PersonalInfoesController(HospitalDbContext context)
         {
             _context = context;
         }
 
-        // GET: Users
+        // GET: PersonalInfoes
         public async Task<IActionResult> Index()
         {
-              return _context.Users != null ? 
-                          View(await _context.Users.ToListAsync()) :
-                          Problem("Entity set 'HospitalDbContext.Users'  is null.");
+            var hospitalDbContext = _context.PersonalInfos.Include(p => p.User);
+            return View(await hospitalDbContext.ToListAsync());
         }
 
-        // GET: Users/Details/5
+        // GET: PersonalInfoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Users == null)
+            if (id == null || _context.PersonalInfos == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.Users
+            var personalInfo = await _context.PersonalInfos
+                .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            if (personalInfo == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(personalInfo);
         }
 
-        
-
-        // GET: Users/Create
+        // GET: PersonalInfoes/Create
         public IActionResult Create()
         {
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: Users/Create
+        // POST: PersonalInfoes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Password,NeedChangePassword,Email,FirstName,LastName,Image,Deleted,Activated,Username,IsLocked")] User user)
+        public async Task<IActionResult> Create([Bind("Id,UserId,Dpi,PhoneNumber1,PhoneNumber2,Birthdate,AddressLine1,AddressLine2,MaritalStatus,City")] PersonalInfo personalInfo)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
+                _context.Add(personalInfo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", personalInfo.UserId);
+            return View(personalInfo);
         }
 
-        // GET: Users/Edit/5
+        // GET: PersonalInfoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Users == null)
+            if (id == null || _context.PersonalInfos == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var personalInfo = await _context.PersonalInfos.FindAsync(id);
+            if (personalInfo == null)
             {
                 return NotFound();
             }
-            return View(user);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", personalInfo.UserId);
+            return View(personalInfo);
         }
 
-        // POST: Users/Edit/5
+        // POST: PersonalInfoes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Password,NeedChangePassword,Email,FirstName,LastName,Image,Deleted,Activated,Username,IsLocked")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Dpi,PhoneNumber1,PhoneNumber2,Birthdate,AddressLine1,AddressLine2,MaritalStatus,City")] PersonalInfo personalInfo)
         {
-            if (id != user.Id)
+            if (id != personalInfo.Id)
             {
                 return NotFound();
             }
@@ -100,12 +101,12 @@ namespace HospitalSanJose.Controllers
             {
                 try
                 {
-                    _context.Update(user);
+                    _context.Update(personalInfo);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.Id))
+                    if (!PersonalInfoExists(personalInfo.Id))
                     {
                         return NotFound();
                     }
@@ -116,49 +117,51 @@ namespace HospitalSanJose.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", personalInfo.UserId);
+            return View(personalInfo);
         }
 
-        // GET: Users/Delete/5
+        // GET: PersonalInfoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Users == null)
+            if (id == null || _context.PersonalInfos == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.Users
+            var personalInfo = await _context.PersonalInfos
+                .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            if (personalInfo == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(personalInfo);
         }
 
-        // POST: Users/Delete/5
+        // POST: PersonalInfoes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Users == null)
+            if (_context.PersonalInfos == null)
             {
-                return Problem("Entity set 'HospitalDbContext.Users'  is null.");
+                return Problem("Entity set 'HospitalDbContext.PersonalInfos'  is null.");
             }
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
+            var personalInfo = await _context.PersonalInfos.FindAsync(id);
+            if (personalInfo != null)
             {
-                _context.Users.Remove(user);
+                _context.PersonalInfos.Remove(personalInfo);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int id)
+        private bool PersonalInfoExists(int id)
         {
-          return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.PersonalInfos?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
