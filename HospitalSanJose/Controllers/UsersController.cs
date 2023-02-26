@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HospitalSanJose.Models;
+using HospitalSanJose.DTO;
 
 namespace HospitalSanJose.Controllers
 {
@@ -21,14 +22,22 @@ namespace HospitalSanJose.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-              return _context.Users != null ? 
-                          View(await _context.Users.Where(u=>!u.Deleted).ToListAsync()) :
+            var name = HttpContext.Session.GetString("Username");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (name == null || userId == null)
+                return Redirect("/auth/login");
+            return _context.Users != null ?
+                          View(await _context.Users.Where(u => !u.Deleted).ToListAsync()) :
                           Problem("Entity set 'HospitalDbContext.Users'  is null.");
         }
 
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            var name = HttpContext.Session.GetString("Username");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (name == null || userId == null)
+                return Redirect("/auth/Login");
             if (id == null || _context.Users == null)
             {
                 return NotFound();
@@ -44,11 +53,15 @@ namespace HospitalSanJose.Controllers
             return View(user);
         }
 
-        
+
 
         // GET: Users/Create
         public IActionResult Create()
         {
+            var name = HttpContext.Session.GetString("Username");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (name == null || userId == null)
+                return Redirect("/auth/login");
             return View();
         }
 
@@ -59,18 +72,31 @@ namespace HospitalSanJose.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Password,NeedChangePassword,Email,FirstName,LastName,Image,Deleted,Activated,Username,IsLocked")] User user)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
+            user.Email = user.Email.Trim();
+            user.Username = user.Username.Trim();
+            var userDB = _context.Users.FirstOrDefault(u => u.Username == user.Username || u.Email == user.Email);
+            if (userDB != null && !userDB.Deleted)
+                return View(user);
+
+            // Call the Register method to set its properties
+            string salt = BCrypt.Net.BCrypt.GenerateSalt();
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
+            // Add the user to the database
+            _context.Users.Add(user);
+            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            //_logger.LogInformation($"Se registró el usuario {user.Username} con el correo {user.Email}");
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var name = HttpContext.Session.GetString("Username");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (name == null || userId == null)
+                return Redirect("/auth/Login");
             if (id == null || _context.Users == null)
             {
                 return NotFound();
@@ -96,10 +122,18 @@ namespace HospitalSanJose.Controllers
                 return NotFound();
             }
 
+            user.Email = user.Email.Trim();
+            user.Username = user.Username.Trim();
+
             if (ModelState.IsValid)
             {
+                var userDB = _context.Users.FirstOrDefault(u => (u.Username == user.Username || u.Email == user.Email) && u.Id != user.Id);
+                if (userDB != null && !userDB.Deleted)
+                    return View(user);
                 try
                 {
+                    string salt = BCrypt.Net.BCrypt.GenerateSalt();
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
                     _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
@@ -122,6 +156,10 @@ namespace HospitalSanJose.Controllers
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            var name = HttpContext.Session.GetString("Username");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (name == null || userId == null)
+                return Redirect("/auth/login");
             if (id == null || _context.Users == null)
             {
                 return NotFound();
@@ -152,15 +190,15 @@ namespace HospitalSanJose.Controllers
                 user.Deleted = true;
                 _context.Users.Update(user);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool UserExists(int id)
         {
-          return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-       
+
     }
 }

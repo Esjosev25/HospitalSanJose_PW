@@ -2,17 +2,18 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MySqlX.XDevAPI;
 
 namespace HospitalSanJose.Controllers
 {
     public class ProfileController : Controller
     {
         private readonly HospitalDbContext _context;
-        private readonly int _userId;
+
         public ProfileController(HospitalDbContext context)
         {
             _context = context;
-    
+
         }
 
 
@@ -22,9 +23,13 @@ namespace HospitalSanJose.Controllers
         {
             ViewBag.ActiveTab = "profile-overview";
 
-            var id = 9;
+            var name = HttpContext.Session.GetString("Username");
+            var id = HttpContext.Session.GetInt32("UserId");
+            if (name == null || id == null)
+                return Redirect("/auth/login");
+
             var user = await _context.Users.FindAsync(id);
-            if (id == null || _context.PersonalInfos == null || user == null)
+            if (_context.PersonalInfos == null || user == null)
             {
                 return NotFound();
             }
@@ -46,7 +51,10 @@ namespace HospitalSanJose.Controllers
         {
             ViewBag.ActiveTab = "profile-edit";
 
-            var id = 9;
+            var name = HttpContext.Session.GetString("Username");
+            var id = HttpContext.Session.GetInt32("UserId");
+            if (name == null || id == null)
+                return Redirect("/auth/login");
             var user = await _context.Users.FindAsync(id);
             if (id == null || _context.PersonalInfos == null || user == null)
             {
@@ -70,7 +78,10 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Edit(PersonalInfo personalInfo)
         {
             ViewBag.ActiveTab = "profile-edit";
-            var id = 9;
+            var name = HttpContext.Session.GetString("Username");
+            var id = HttpContext.Session.GetInt32("UserId");
+            if (name == null || id == null)
+                return Redirect("/auth/login");
             var user = await _context.Users.FindAsync(id);
             var personalInfoDb = _context.PersonalInfos.FirstOrDefault((a) => a.UserId == id);
             if (user == null && personalInfoDb == null && id != user.Id)
@@ -82,7 +93,7 @@ namespace HospitalSanJose.Controllers
             try
             {
                 var userDB = _context.Users.FirstOrDefault(u => (u.Username == personalInfo.User.Username || u.Email == personalInfo.User.Email) && u.Id != id);
-                if (userDB != null )
+                if (userDB != null)
                 {
                     return View(personalInfoDb);
                 }
@@ -110,14 +121,17 @@ namespace HospitalSanJose.Controllers
                     throw;
                 }
             }
-         
+
 
 
         }
-        public  async Task<IActionResult> ChangePassword()
+        public async Task<IActionResult> ChangePassword()
         {
             ViewBag.ActiveTab = "profile-change-password";
-            var id = 9;
+            var name = HttpContext.Session.GetString("Username");
+            var id = HttpContext.Session.GetInt32("UserId");
+            if (name == null || id == null)
+                return Redirect("/auth/login");
             var user = await _context.Users.FindAsync(id);
             if (id == null || _context.PersonalInfos == null || user == null)
             {
@@ -136,50 +150,53 @@ namespace HospitalSanJose.Controllers
             return View(personalInfo);
         }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ChangePassword(string Password, string NewPassword, string ReNewPassword)
-    {
-      ViewBag.ActiveTab = "profile-edit";
-      var id = 9;
-      var user = await _context.Users.FindAsync(id);
-      var personalInfoDb = _context.PersonalInfos.FirstOrDefault((a) => a.UserId == id);
-      if (user == null || personalInfoDb == null)
-      {
-        return NotFound();
-      }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string Password, string NewPassword, string ReNewPassword)
+        {
+            ViewBag.ActiveTab = "profile-edit";
+            var name = HttpContext.Session.GetString("Username");
+            var id = HttpContext.Session.GetInt32("UserId");
+            if (name == null || id == null)
+                return Redirect("/auth/login");
+            var user = await _context.Users.FindAsync(id);
+            var personalInfoDb = _context.PersonalInfos.FirstOrDefault((a) => a.UserId == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
 
-      try
-      {
+            try
+            {
                 if (!NewPassword.Equals(ReNewPassword))
                 {
                     // Agregar alerta en caso que no hagan match las psw
 
                     return View(personalInfoDb);
                 }
-                 if(!BCrypt.Net.BCrypt.Verify(Password, user.Password))
+                if (!BCrypt.Net.BCrypt.Verify(Password, user.Password))
                 {
                     return View(personalInfoDb);
                 }
                 string salt = BCrypt.Net.BCrypt.GenerateSalt();
-          
+
                 user.Password = BCrypt.Net.BCrypt.HashPassword(NewPassword, salt);
                 _context.Update(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
 
             }
-      catch (DbUpdateConcurrencyException)
-      {
-        
-          throw;
-        
-      }
+            catch (DbUpdateConcurrencyException)
+            {
+
+                throw;
+
+            }
 
 
 
-    }
+        }
         private bool PersonalInformationExists(int id)
         {
             return (_context.PersonalInfos?.Any(e => e.UserId == id)).GetValueOrDefault();

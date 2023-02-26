@@ -18,10 +18,10 @@ namespace HospitalSanJose.Controllers
         }
 
         public IActionResult Login()
-        {   
+        {
             var name = HttpContext.Session.GetString("Username");
-            var id = HttpContext.Session.GetInt32("UserId").ToString();
-            if(name != null && id != null)
+            var id = HttpContext.Session.GetString("UserId");
+            if (name != null && id != null)
                 return RedirectToAction("dashboard");
             return View("Login");
         }
@@ -33,11 +33,11 @@ namespace HospitalSanJose.Controllers
         [Route("dashboard")]
         public IActionResult Dashboard()
         {
-            // var name = HttpContext.Session.GetString("Username");
-            // var id = HttpContext.Session.GetInt32("UserId").ToString();
-            // if (name != null && id != null)
-            // return RedirectToAction("Login");
-                return View("Dashboard");
+            var name = HttpContext.Session.GetString("Username");
+            var id = HttpContext.Session.GetString("UserId");
+            if (name == null || id == null)
+                return RedirectToAction("Login");
+            return View("Dashboard");
         }
 
 
@@ -46,7 +46,7 @@ namespace HospitalSanJose.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-           
+
             return RedirectToAction("Login");
         }
 
@@ -116,6 +116,8 @@ namespace HospitalSanJose.Controllers
             if (!ModelState.IsValid)
                 // If the model state is invalid, redisplay the form
                 return View(userDto);
+            formData.Email = formData.Email.Trim();
+            formData.Username = formData.Username.Trim();
             var userDB = _context.Users.FirstOrDefault(u => u.Username == formData.Username || u.Email == formData.Email);
             if (userDB != null && !userDB.Deleted)
                 return View(userDto);

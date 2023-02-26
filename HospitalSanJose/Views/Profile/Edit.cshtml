@@ -13,7 +13,7 @@
     <div class="row mb-3">
         <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
         <div class="col-md-8 col-lg-9">
-            <img src="assets/img/profile-img.jpg" alt="Profile">
+            <img src="~/assets/img/profile-img.jpg" alt="Profile">
             <div class="pt-2">
                 <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
                 <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
@@ -38,55 +38,69 @@
             <input name="FirstName" type="text" class="form-control" id="FirstName" value="@Model.User.FirstName @Model.User.LastName" disabled>
         </div>
     </div>
-
-    <div class="row mb-3">
-        <label asp-for="Dpi" class="col-md-4 col-lg-3 col-form-label"></label>
-        <div class="col-md-8 col-lg-9">
-            <input asp-for="Dpi" class="form-control" disabled />
+    @if (Model.Dpi != null)
+    {
+        <div class="row mb-3">
+            <label asp-for="Dpi" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="Dpi" class="form-control" disabled />
+            </div>
         </div>
-    </div>
- 
-    <div class="row mb-3">
-        <label asp-for="Birthdate" class="col-md-4 col-lg-3 col-form-label"></label>
+    }
 
-        <div class="col-md-8 col-lg-9">
-            <input asp-for="Birthdate" class="form-control" disabled />
+    @if (Model.Birthdate.ToString("dd/MM/yyyy") != new DateTime(1,1,1).ToString("dd/MM/yyyy"))
+    {
+        <div class="row mb-3">
+            <label asp-for="Birthdate" class="col-md-4 col-lg-3 col-form-label"></label>
+
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="Birthdate" type="date" class="form-control" disabled />
+            </div>
+
+            <span asp-validation-for="Birthdate" class="text-danger"></span>
         </div>
+    }
+    @if (Model.MaritalStatus != null)
+    {
+        <div class="row mb-3">
+            <label asp-for="MaritalStatus" class="col-md-4 col-lg-3 col-form-label"></label>
 
-        <span asp-validation-for="Birthdate" class="text-danger"></span>
-    </div>
-    <div class="row mb-3">
-        <label asp-for="MaritalStatus" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="MaritalStatus" class="form-control" />
+            </div>
 
-        <div class="col-md-8 col-lg-9">
-            <input asp-for="MaritalStatus" class="form-control" />
+            <span asp-validation-for="MaritalStatus" class="text-danger"></span>
         </div>
-
-        <span asp-validation-for="MaritalStatus" class="text-danger"></span>
-    </div>
+    }
+    @if(Model.City != null){
     <div class="row mb-3">
         <label asp-for="City" class="col-md-4 col-lg-3 col-form-label"></label>
-
         <div class="col-md-8 col-lg-9">
             <input asp-for="City" class="form-control" />
         </div>
 
         <span asp-validation-for="City" class="text-danger"></span>
     </div>
-    <div class="row mb-3">
-        <label asp-for="AddressLine1" class="col-md-4 col-lg-3 col-form-label"></label>
-        <div class="col-md-8 col-lg-9">
-            <input asp-for="AddressLine1" class="form-control" />
-            <span asp-validation-for="AddressLine1" class="text-danger"></span>
+    }
+    @if (Model.AddressLine1 != null)
+    {
+        <div class="row mb-3">
+            <label asp-for="AddressLine1" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="AddressLine1" class="form-control" />
+                <span asp-validation-for="AddressLine1" class="text-danger"></span>
+            </div>
         </div>
-    </div>
-    <div class="row mb-3">
-        <label asp-for="AddressLine2" class="col-md-4 col-lg-3 col-form-label"></label>
-        <div class="col-md-8 col-lg-9">
-            <input asp-for="AddressLine2" class="form-control" />
-            <span asp-validation-for="AddressLine2" class="text-danger"></span>
+        <div class="row mb-3">
+            <label asp-for="AddressLine2" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="AddressLine2" class="form-control" />
+                <span asp-validation-for="AddressLine2" class="text-danger"></span>
+            </div>
         </div>
-    </div>
+    }
+
+    @if(Model.PhoneNumber1 != null){
     <div class="row mb-3">
         <label asp-for="PhoneNumber1" class="col-md-4 col-lg-3 col-form-label"></label>
         <div class="col-md-8 col-lg-9">
@@ -94,14 +108,25 @@
             <span asp-validation-for="PhoneNumber1" class="text-danger"></span>
         </div>
     </div>
-    <div class="row mb-3">
-        <label asp-for="PhoneNumber2" class="col-md-4 col-lg-3 col-form-label"></label>
-        <div class="col-md-8 col-lg-9">
-            <input asp-for="PhoneNumber2" class="form-control" />
-            <span asp-validation-for="PhoneNumber2" class="text-danger"></span>
+    }
+    @if (Model.PhoneNumber2 != null)
+    {
+        <div class="row mb-3">
+            <label asp-for="PhoneNumber2" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="PhoneNumber2" class="form-control" />
+                <span asp-validation-for="PhoneNumber2" class="text-danger"></span>
+            </div>
         </div>
-    </div>
+    }
 
+    @if (!Model.User.Activated)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            Por favor contacta con administración para completar tu perfil
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
     @* <div class="text-center">
     <button type="submit" class="btn btn-primary">Save Changes</button>
     </div>

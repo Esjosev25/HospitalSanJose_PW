@@ -21,13 +21,21 @@ namespace HospitalSanJose.Controllers
         // GET: PersonalInfoes
         public async Task<IActionResult> Index()
         {
-            var hospitalDbContext = _context.PersonalInfos.Include(p => p.User);
+            var name = HttpContext.Session.GetString("Username");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (name == null || userId == null)
+                return Redirect("/auth/login");
+            var hospitalDbContext = _context.PersonalInfos.Include(p => p.User).Where(p => !p.User.Deleted);
             return View(await hospitalDbContext.ToListAsync());
         }
 
         // GET: PersonalInfoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            var name = HttpContext.Session.GetString("Username");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (name == null || userId == null)
+                return Redirect("/auth/login");
             if (id == null || _context.PersonalInfos == null)
             {
                 return NotFound();
@@ -47,6 +55,11 @@ namespace HospitalSanJose.Controllers
         // GET: PersonalInfoes/Create
         public IActionResult Create()
         {
+            var name = HttpContext.Session.GetString("Username");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (name == null || userId == null)
+                return Redirect("/auth/login");
+
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
@@ -60,6 +73,7 @@ namespace HospitalSanJose.Controllers
         {
             if (ModelState.IsValid)
             {
+                personalInfo.User.Activated = true;
                 _context.Add(personalInfo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -71,17 +85,21 @@ namespace HospitalSanJose.Controllers
         // GET: PersonalInfoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var name = HttpContext.Session.GetString("Username");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (name == null || userId == null)
+                return Redirect("/auth/login");
             if (id == null || _context.PersonalInfos == null)
             {
                 return NotFound();
             }
 
-            var personalInfo = await _context.PersonalInfos.FindAsync(id);
+            var personalInfo = await _context.PersonalInfos.Include(u => u.User).FirstOrDefaultAsync(u => u.Id == id);
             if (personalInfo == null)
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", personalInfo.UserId);
+
             return View(personalInfo);
         }
 
@@ -90,40 +108,43 @@ namespace HospitalSanJose.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Dpi,PhoneNumber1,PhoneNumber2,Birthdate,AddressLine1,AddressLine2,MaritalStatus,City")] PersonalInfo personalInfo)
+        public async Task<IActionResult> Edit(int id, string Username, [Bind("Id,UserId,Dpi,PhoneNumber1,PhoneNumber2,Birthdate,AddressLine1,AddressLine2,MaritalStatus,City")] PersonalInfo personalInfo)
         {
             if (id != personalInfo.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+
+            try
             {
-                try
-                {
-                    _context.Update(personalInfo);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PersonalInfoExists(personalInfo.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(personalInfo);
+                await _context.SaveChangesAsync();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", personalInfo.UserId);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PersonalInfoExists(personalInfo.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
+
             return View(personalInfo);
         }
 
         // GET: PersonalInfoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            var name = HttpContext.Session.GetString("Username");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (name == null || userId == null)
+                return Redirect("/auth/login");
             if (id == null || _context.PersonalInfos == null)
             {
                 return NotFound();
@@ -154,14 +175,14 @@ namespace HospitalSanJose.Controllers
             {
                 _context.PersonalInfos.Remove(personalInfo);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PersonalInfoExists(int id)
         {
-          return (_context.PersonalInfos?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.PersonalInfos?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
