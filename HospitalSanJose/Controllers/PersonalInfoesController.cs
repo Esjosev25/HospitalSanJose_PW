@@ -60,7 +60,7 @@ namespace HospitalSanJose.Controllers
             if (name == null || userId == null)
                 return Redirect("/auth/login");
 
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Username");
             return View();
         }
 
@@ -71,15 +71,28 @@ namespace HospitalSanJose.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserId,Dpi,PhoneNumber1,PhoneNumber2,Birthdate,AddressLine1,AddressLine2,MaritalStatus,City")] PersonalInfo personalInfo)
         {
-            if (ModelState.IsValid)
+
+            var personalInfoDb = await _context.PersonalInfos.FirstOrDefaultAsync(u => u.UserId == personalInfo.UserId);
+            if (personalInfoDb != null)
             {
-                personalInfo.User.Activated = true;
-                _context.Add(personalInfo);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //Usuario ya posee informacion asociada
+                ViewData["UserId"] = new SelectList(_context.Users, "Id", "Username", personalInfo.UserId);
+                return View(personalInfo);
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", personalInfo.UserId);
-            return View(personalInfo);
+
+            var userDB = await _context.Users.FirstOrDefaultAsync(u => u.Id == personalInfo.UserId);
+            if (userDB == null)
+            {
+                return NotFound();
+            }
+            personalInfo.User = userDB;
+
+            personalInfo.User.Activated = true;
+            _context.Add(personalInfo);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
+
         }
 
         // GET: PersonalInfoes/Edit/5
