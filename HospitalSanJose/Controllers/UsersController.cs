@@ -22,7 +22,7 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Index()
         {
               return _context.Users != null ? 
-                          View(await _context.Users.ToListAsync()) :
+                          View(await _context.Users.Where(u=>!u.Deleted).ToListAsync()) :
                           Problem("Entity set 'HospitalDbContext.Users'  is null.");
         }
 
@@ -149,7 +149,8 @@ namespace HospitalSanJose.Controllers
             var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
-                _context.Users.Remove(user);
+                user.Deleted = true;
+                _context.Users.Update(user);
             }
             
             await _context.SaveChangesAsync();

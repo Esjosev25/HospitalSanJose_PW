@@ -23,8 +23,7 @@ public partial class User
     public int Id { get; set; }
     public string Password { get; set; } = null!;
 
-    [DisplayName("Cambio de Contraseña")]
-    public bool? NeedChangePassword { get; set; }
+
 
     [DisplayName("Correo")]
     public string Email { get; set; } = null!;

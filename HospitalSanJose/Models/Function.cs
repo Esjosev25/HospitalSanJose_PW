@@ -13,5 +13,5 @@ public partial class Function
 
     public string Type { get; set; } = null!;
 
-    public virtual ICollection<UserFunction> UserFunctions { get; } = new List<UserFunction>();
+    public virtual ICollection<RoleFunction> RoleFunctions { get; } = new List<RoleFunction>();
 }

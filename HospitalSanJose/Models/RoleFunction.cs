@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HospitalSanJose.Models;
 
-public partial class UserFunction
+public partial class RoleFunction
 {
     public int Id { get; set; }
 

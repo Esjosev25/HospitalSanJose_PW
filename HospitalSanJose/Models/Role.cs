@@ -11,7 +11,7 @@ public partial class Role
 
     public string Description { get; set; } = null!;
 
-    public virtual ICollection<UserFunction> UserFunctions { get; } = new List<UserFunction>();
+    public virtual ICollection<RoleFunction> RoleFunctions { get; } = new List<RoleFunction>();
 
     public virtual ICollection<UserRole> UserRoles { get; } = new List<UserRole>();
 }

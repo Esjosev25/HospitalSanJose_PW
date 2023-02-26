@@ -37,7 +37,7 @@ public partial class HospitalDbContext : DbContext
 
   public virtual DbSet<User> Users { get; set; }
 
-  public virtual DbSet<UserFunction> UserFunctions { get; set; }
+  public virtual DbSet<RoleFunction> RoleFunctions { get; set; }
 
   public virtual DbSet<UserRole> UserRoles { get; set; }
 
@@ -368,10 +368,6 @@ public partial class HospitalDbContext : DbContext
       entity.Property(e => e.LastName)
               .HasMaxLength(50)
               .HasColumnName("last_name");
-      entity.Property(e => e.NeedChangePassword)
-              .IsRequired()
-              .HasDefaultValueSql("'1'")
-              .HasColumnName("need_change_password");
       entity.Property(e => e.Password)
               .HasMaxLength(255)
               .HasColumnName("password");
@@ -380,11 +376,11 @@ public partial class HospitalDbContext : DbContext
               .HasColumnName("username");
     });
 
-    modelBuilder.Entity<UserFunction>(entity =>
+    modelBuilder.Entity<RoleFunction>(entity =>
     {
       entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-      entity.ToTable("user_functions");
+      entity.ToTable("role_functions");
 
       entity.HasIndex(e => e.FunctionId, "function_id");
 
@@ -394,12 +390,12 @@ public partial class HospitalDbContext : DbContext
       entity.Property(e => e.FunctionId).HasColumnName("function_id");
       entity.Property(e => e.RoleId).HasColumnName("role_id");
 
-      entity.HasOne(d => d.Function).WithMany(p => p.UserFunctions)
+      entity.HasOne(d => d.Function).WithMany(p => p.RoleFunctions)
               .HasForeignKey(d => d.FunctionId)
               .OnDelete(DeleteBehavior.ClientSetNull)
               .HasConstraintName("user_functions_ibfk_1");
 
-      entity.HasOne(d => d.Role).WithMany(p => p.UserFunctions)
+      entity.HasOne(d => d.Role).WithMany(p => p.RoleFunctions)
               .HasForeignKey(d => d.RoleId)
               .OnDelete(DeleteBehavior.ClientSetNull)
               .HasConstraintName("user_functions_ibfk_2");
