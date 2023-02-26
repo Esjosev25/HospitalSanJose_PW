@@ -18,7 +18,7 @@ namespace HospitalSanJose.Controllers
         }
 
         public IActionResult Login()
-        {
+        {   
             var name = HttpContext.Session.GetString("Username");
             var id = HttpContext.Session.GetInt32("UserId").ToString();
             if(name != null && id != null)

@@ -2,76 +2,123 @@
 
 @{
     ViewData["Title"] = "Usuarios";
+    var flag = false;
 }
 
 
 <div class="card p-3">
     <h1>Usuarios</h1>
     <hr>
-<a class="btn btn-primary d-flex align-self-end" asp-action="Create"> + Crear Usuario</a>
+    <a class="btn btn-primary d-flex align-self-end" asp-action="Create"> + Crear Usuario</a>
 
     <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Username)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.Deleted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Activated)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.IsLocked)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Username)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Deleted)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Activated)
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Username)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsLocked)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Deleted)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Activated)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.IsLocked)
+                </th>
+                <th>
+                    Acciones
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Username)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastName)
+                    </td>
+                    <td>
+                        @if (item.Deleted)
+                        {
+                            <a class="btn text-success">
+                                <i class="bi bi-check-circle"></i>
+                            </a>
+
+
+                        }
+                        else
+                        {
+                            <a class="btn text-danger">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Activated)
+                        {
+                            <a class="btn text-success">
+                                <i class="bi bi-person-check"></i>
+                            </a>
+
+
+                        }
+                        else
+                        {
+                            <a class="btn text-danger">
+                                <i class="bi bi-person-dash"></i>
+                            </a>
+                        }
+                    </td>
+
+                    <td>
+                        @if (item.IsLocked)
+                        {
+                            <a class="btn text-warning" >
+                                <i class="bi bi-lock"></i>
+                            </a>
+
+
+                        }
+                        else
+                        {   
+
+                            <a class="btn text-warning">
+                                <i class="bi bi-unlock"></i>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="btn bi bi-pencil"></i></a> |
+                        <a asp-action="Details" asp-route-id="@item.Id"><i class="btn bi bi-card-text"></i></a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="btn bi bi-trash3"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="~/js/sweetAlert.js"></script>
+
