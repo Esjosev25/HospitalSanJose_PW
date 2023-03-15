@@ -23,4 +23,8 @@
     <Folder Include="Views\Dashboard\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HospitalSanJoseModel\HospitalSanJoseModel.csproj" />
+  </ItemGroup>
+
 </Project>

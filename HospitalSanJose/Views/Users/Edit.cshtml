@@ -1,4 +1,4 @@
-﻿@model HospitalSanJose.Models.User
+﻿@model HospitalSanJoseModel.UserDTO
 
 @{
     ViewData["Title"] = "Edit";
@@ -75,6 +75,15 @@
         <a asp-action="Index">Regresar a menú Usuarios</a>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="~/js/sweetAlert.js"></script>
+
+@if (Model.Response != null && Model.Response.ShowWarning)
+{
+    <script>
+        showAlert('@Model.Response.AlertTitle', '@Model.Response.AlertMessage', '@Model.Response.AlertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));
+    </script>
+}
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
