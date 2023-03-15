@@ -1,12 +1,10 @@
 ﻿using HospitalSanJose.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MySqlX.XDevAPI;
 
 namespace HospitalSanJose.Controllers
 {
-    public class ProfileController : Controller
+  public class ProfileController : Controller
     {
         private readonly HospitalDbContext _context;
 
@@ -22,6 +20,19 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Index()
         {
             ViewBag.ActiveTab = "profile-overview";
+
+            //PRUEBA
+            // Get image path
+            string imgPath = "C:\\Users\\Usurio\\source\\repos\\HospitalSanJose\\HospitalSanJose\\wwwroot\\img\\messages-3.jpg";
+            // Convert image to byte array
+            byte[] byteData = System.IO.File.ReadAllBytes(imgPath);
+            //Convert byte arry to base64string
+            string imreBase64Data = Convert.ToBase64String(byteData);
+            string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
+            //Passing image data in viewbag to view
+            ViewBag.ImageData = imgDataURL;
+            //PRUEBA
+
 
             var name = HttpContext.Session.GetString("Username");
             var id = HttpContext.Session.GetInt32("UserId");
@@ -72,7 +83,12 @@ namespace HospitalSanJose.Controllers
             // ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", personalInfo.UserId);
             return View(personalInfo);
         }
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadImage( IFormFile uploadFile)
+        {
+            return RedirectToAction(nameof(Index));
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(PersonalInfo personalInfo)
