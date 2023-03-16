@@ -1,24 +1,11 @@
-﻿using HospitalSanJose.Models.Auth;
-using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel;
 
 namespace HospitalSanJose.Models;
 
 public partial class User
 {
-    public User()
-    {
-        // Empty constructor
-    }
-    public void Register(Register register)
-    {
-        this.Password = register.Password1;
-        this.Email = register.Email;
-        this.FirstName = register.FirstName;
-        this.LastName = register.LastName;
-        this.Username = register.Username;
-    }
+
 
     public int Id { get; set; }
     public string Password { get; set; } = null!;

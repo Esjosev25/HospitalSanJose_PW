@@ -1,4 +1,4 @@
-﻿namespace HospitalSanJose.Models.Auth
+﻿namespace HospitalSanJose.DTO
 {
     public partial class Register
     {
@@ -10,5 +10,6 @@
         public string FirstName { get; set; } = null!;
 
         public string LastName { get; set; } = null!;
+        public HospitalSanJoseModel.Response? Response { get; set; }   
     }
 }

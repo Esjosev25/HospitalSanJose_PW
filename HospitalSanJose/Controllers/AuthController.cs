@@ -1,6 +1,6 @@
 ﻿using HospitalSanJose.DTO;
 using HospitalSanJose.Models;
-using HospitalSanJose.Models.Auth;
+using HospitalSanJoseModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalSanJose.Controllers
@@ -19,10 +19,7 @@ namespace HospitalSanJose.Controllers
 
         public IActionResult Login()
         {
-            var name = HttpContext.Session.GetString("Username");
-            var id = HttpContext.Session.GetString("UserId");
-            if (name != null && id != null)
-                return RedirectToAction("dashboard");
+
             return View("Login");
         }
 
@@ -33,10 +30,6 @@ namespace HospitalSanJose.Controllers
         [Route("dashboard")]
         public IActionResult Dashboard()
         {
-            var name = HttpContext.Session.GetString("Username");
-            var id = HttpContext.Session.GetString("UserId");
-            if (name == null || id == null)
-                return RedirectToAction("Login");
             return View("Dashboard");
         }
 
@@ -46,46 +39,41 @@ namespace HospitalSanJose.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-
             return RedirectToAction("Login");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(Login formData)
+        public IActionResult Login(Login login)
         {
-            var userDto = new UserDto
-            {
-                ShowWarning = true,
-                AlertTitle = "Aviso",
-                AlertMessage = "Error en iniciar sesion",
-                AlertIcon = "error",
-            };
+            var response = new HospitalSanJoseModel.Response();
+            login.Response = response;
             if (!ModelState.IsValid)
             {
                 // If the model state is invalid, redisplay the form
-                return View(userDto);
+                return View(login);
             }
-            var user = _context.Users.FirstOrDefault(u => u.Username == formData.Username);
+            var user = _context.Users.FirstOrDefault(u => u.Username == login.Username);
 
             // Look up the user in the database
             if (user == null || user.Deleted)
             {
-                userDto.AlertIcon = "error";
-                return View(userDto);
+                login.Response.AlertIcon = "error";
+                login.Response.AlertMessage = "Error en iniciar sesion";
+                return View(login);
             }
 
             if (user.IsLocked)
             {
-                userDto.AlertMessage = "Usuario bloqueado";
-                return View(userDto);
+                login.Response.AlertMessage = "Usuario bloqueado";
+                return View(login);
             }
 
-            if (BCrypt.Net.BCrypt.Verify(formData.Password, user.Password))
+            if (BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
             {
                 // Set a cookie to indicate that the user is logged in
                 HttpContext.Response.Cookies.Append("loggedIn", "true");
-                userDto.ShowWarning = false;
+                login.Response.ShowWarning = false;
                 logInformation($"El usuario {user.Username} inició sesión");
 
                 HttpContext.Session.SetString("Username", user.Username);
@@ -93,7 +81,7 @@ namespace HospitalSanJose.Controllers
                 // Redirect to the home page
                 return RedirectToAction("Index", "Dashboard");
             }
-            return View(userDto);
+            return View(login);
 
         }
 
@@ -103,36 +91,41 @@ namespace HospitalSanJose.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(Register formData)
+        public async Task<IActionResult> Register(Register register)
         {
-            var userDto = new UserDto
-            {
-                ShowWarning = true,
-                AlertTitle = "Aviso",
-                AlertMessage = "Ya existe un usuario con ese correo/username",
-                AlertIcon = "error",
+            
+            var response = new Response{
+              AlertMessage = "Ya existe un usuario con ese correo/username",
+              AlertIcon = "error",
             };
-
+            register.Response = response;
             if (!ModelState.IsValid)
                 // If the model state is invalid, redisplay the form
-                return View(userDto);
-            formData.Email = formData.Email.Trim();
-            formData.Username = formData.Username.Trim();
-            var userDB = _context.Users.FirstOrDefault(u => u.Username == formData.Username || u.Email == formData.Email);
-            if (userDB != null && !userDB.Deleted)
-                return View(userDto);
+                return View(register);
+            register.Email = register.Email.Trim();
+            register.Username = register.Username.Trim();
+            var userDB = _context.Users.FirstOrDefault(u => u.Username == register.Username || u.Email == register.Email);
+            if (userDB != null)
+                return View(register);
 
-            if (!formData.Password1.Equals(formData.Password2))
+            if (!register.Password1.Equals(register.Password2))
             {
                 // Agregar alerta en caso que no hagan match las psw
-                userDto.AlertIcon = "warning";
-                userDto.AlertMessage = "Ambos password deben de coincidir";
-                return View(userDto);
+                register.Response.AlertIcon = "warning";
+                register.Response.AlertMessage = "Ambos password deben de coincidir";
+                return View(register);
             }
-            userDto.ShowWarning = false;
-            var user = new User();
+            register.Response.ShowWarning = false;
+            var user = new User{
+                Password = register.Password1,
+                Email = register.Email,
+                FirstName = register.FirstName,
+                LastName = register.LastName,
+                Username = register.Username,
+            };
             // Call the Register method to set its properties
-            user.Register(formData);
+            
+
             string salt = BCrypt.Net.BCrypt.GenerateSalt();
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
             // Add the user to the database
