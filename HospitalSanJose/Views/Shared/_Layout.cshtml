@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿
+@{
+    var admin = ViewBag.Roles != null ? ViewBag.Roles.Contains("Admin") : false;
+    var paciente = ViewBag.Roles != null ?  ViewBag.Roles.Contains("Paciente") : false;
+    var secretaria = ViewBag.Roles != null ? ViewBag.Roles.Contains("Secretaria") : false;
+    var doctor = ViewBag.Roles != null ? ViewBag.Roles.Contains("Doctor") : false;
+    
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -43,7 +51,7 @@
     <header id="header"
             class="header fixed-top d-flex align-items-center">
         <div class="d-flex align-items-center justify-content-between">
-            <a href="/dashboard"
+            <a href="@Url.Action("Dashboard","Auth")"
                class="logo d-flex align-items-center">
                 <img src="~/img/logo.png"
                      alt="" />
@@ -75,7 +83,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="/users/profile">
+                            <a class="dropdown-item d-flex align-items-center" href="@Url.Action("Index","Profile")">
                 <i class="bi bi-person"></i>
                 <span>Mi Perfil</span>
               </a>
@@ -85,7 +93,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="/users/profile/edit">
+                            <a class="dropdown-item d-flex align-items-center" href="@Url.Action("Edit","Profile")">
                 <i class="bi bi-gear"></i>
                 <span>Ajustes de Cuenta</span>
               </a>
@@ -96,7 +104,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="/logout">
+                            <a class="dropdown-item d-flex align-items-center" href="@Url.Action("Logout","Auth")">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Cerrar Sesión</span>
               </a>
@@ -117,114 +125,173 @@
             id="sidebar-nav">
             <li class="nav-item">
                 <a class="nav-link collapsed"
-                   href="/dashboard">
+                   href="@Url.Action("Dashboard","Auth")">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <!-- End Dashboard Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed"
-                   data-bs-target="#components-nav"
-                   data-bs-toggle="collapse"
-                   href="#">
-                    <i class="bi bi-menu-button-wide"></i><span>Usuarios</span><i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="components-nav"
-                    class="nav-content collapse"
-                    data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="/users">
-                            <i class="bi bi-circle"></i><span>Listar Usuarios</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/users/create">
-                            <i class="bi bi-circle"></i><span>Crear Usuario</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/personalinfoes">
-                            <i class="bi bi-circle"></i><span>Listar Información Personal</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/personalinfoes/create">
-                            <i class="bi bi-circle"></i><span>Agregar Informacion Personal</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
+            @if (admin || secretaria)
+            {
+                <li class="nav-item">
+                    <a class="nav-link collapsed"
+                    data-bs-target="#users-nav"
+                    data-bs-toggle="collapse"
+                    href="#">
+                        <i class="bi bi-menu-button-wide"></i><span>Usuarios</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    
+                    <ul id="users-nav"
+                        class="nav-content collapse"
+                        data-bs-parent="#sidebar-nav">
+                        
+                        <li>
+                            <a href="@Url.Action("Index","Users")">
+                                <i class="bi bi-circle"></i><span>Listar Usuarios</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Create","Users")">
+                                <i class="bi bi-circle"></i><span>Crear Usuario</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index","PersonalInfoes")">
+                                <i class="bi bi-circle"></i><span>Listar Información Personal</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Create","PersonalInfoes")">
+                                <i class="bi bi-circle"></i><span>Agregar Informacion Personal</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            }
+            
             <!-- End Usuarios Nav -->
+            @if (admin)
+            {
+                <li class="nav-item">
+                    <a class="nav-link collapsed"
+                       data-bs-target="#roles-nav"
+                       data-bs-toggle="collapse"
+                       href="#">
+                        <i class="bi bi-layout-text-window-reverse"></i><span>Roles</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="roles-nav"
+                        class="nav-content collapse"
+                        data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="@Url.Action("Index","Roles")">
+                                <i class="bi bi-circle"></i><span>Ver Roles</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="tables-data.html">
+                                <i class="bi bi-circle"></i><span>Asignar Roles</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- End Roles Nav -->
+           
+                
+                <li class="nav-item">
+                    <a class="nav-link collapsed"
+                       data-bs-target="#doctors-nav"
+                       data-bs-toggle="collapse"
+                       href="#">
+                        <i class="bi bi-person-vcard"></i><span>Doctores</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="doctors-nav"
+                        class="nav-content collapse"
+                        data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="@Url.Action("Index","Doctors")">
+                                <i class="bi bi-circle"></i><span>Listar Doctores</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Create","Doctors")">
+                                <i class="bi bi-circle"></i><span>Agregar Doctor</span>
+                            </a>
+                        </li>
 
-              <li class="nav-item">
-                <a class="nav-link collapsed"
-                   data-bs-target="#tables-nav"
-                   data-bs-toggle="collapse"
-                   href="#">
-                    <i class="bi bi-layout-text-window-reverse"></i><span>Roles</span><i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="tables-nav"
-                    class="nav-content collapse"
-                    data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="/roles">
-                            <i class="bi bi-circle"></i><span>Ver Roles</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="tables-data.html">
-                            <i class="bi bi-circle"></i><span>Asignar Roles</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <!-- End Roles Nav -->
+                    </ul>
+                </li>
 
+                <li class="nav-item">
+                    <a class="nav-link collapsed"
+                       data-bs-target="#departaments-nav"
+                       data-bs-toggle="collapse"
+                       href="#">
+                        <i class="bi bi-building"></i><span>Departamentos</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="departaments-nav"
+                        class="nav-content collapse"
+                        data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="@Url.Action("Index","Departaments")">
+                                <i class="bi bi-circle"></i><span>Listar Doctores</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Create","Departaments")">
+                                <i class="bi bi-circle"></i><span>Agregar Doctor</span>
+                            </a>
+                        </li>
 
-            <li class="nav-item">
-                <a class="nav-link collapsed"
-                   data-bs-target="#forms-nav"
-                   data-bs-toggle="collapse"
-                   href="#">
-                    <i class="bi bi-journal-text"></i><span>Citas</span><i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="forms-nav"
-                    class="nav-content collapse"
-                    data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="forms-elements.html">
-                            <i class="bi bi-circle"></i><span>Mis Citas</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="forms-layouts.html">
-                            <i class="bi bi-circle"></i><span>Crear Citas</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="forms-editors.html">
-                            <i class="bi bi-circle"></i><span>Form Editors</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="forms-validation.html">
-                            <i class="bi bi-circle"></i><span>Form Validation</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <!-- End Citas Nav -->
-
-          
+                    </ul>
+                </li>
+                <!-- End Doctores Nav -->
+            }
          
-
+            
+                <li class="nav-item">
+                    <a class="nav-link collapsed"
+                       data-bs-target="#citas-nav"
+                       data-bs-toggle="collapse"
+                       href="#">
+                        <i class="bi bi-journal-text"></i><span>Citas</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="citas-nav"
+                        class="nav-content collapse"
+                        data-bs-parent="#sidebar-nav">
+                        <li>
+                            <a href="forms-elements.html">
+                                <i class="bi bi-circle"></i><span>Mis Citas</span>
+                            </a>
+                        </li>
+                    @if (admin || secretaria || doctor)
+                    {
+                        <li>
+                            <a href="forms-layouts.html">
+                                <i class="bi bi-circle"></i><span>Administrar Citas</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="forms-editors.html">
+                                <i class="bi bi-circle"></i><span>Crear Citas</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="forms-validation.html">
+                                <i class="bi bi-circle"></i><span>Form Validation</span>
+                            </a>
+                        </li>
+                    }
+                    </ul>
+                </li>
+                <!-- End Citas Nav -->
+           
+          
+        
             <li class="nav-heading">Páginas</li>
 
             <li class="nav-item">
                 <a class="nav-link collapsed"
-                   href="users/profile">
+                   href="@Url.Action("Index","Profile")">
                     <i class="bi bi-person"></i>
                     <span>Perfil</span>
                 </a>
@@ -232,7 +299,7 @@
             
             <li class="nav-item">
                 <a class="nav-link collapsed"
-                   href="/logout">
+                   href="@Url.Action("Logout","Auth")">
                     <i class="bi-box-arrow-left"></i>
                     <span>Cerrar Sesión</span>
                 </a>

@@ -2,16 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using HospitalSanJose.Models;
 using HospitalSanJoseModel;
+using AutoMapper;
 
 namespace HospitalSanJose.Controllers
 {
   public class UsersController : Controller
     {
         private readonly HospitalDbContext _context;
-
-        public UsersController(HospitalDbContext context)
+        private readonly IMapper _mapper;
+        public UsersController(HospitalDbContext context,IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Users
@@ -21,7 +23,7 @@ namespace HospitalSanJose.Controllers
             if (_context.Users == null)
                 return Problem("Entity set 'HospitalDbContext.Users'  is null.");
 
-            IEnumerable<UserDTO> users = (from u in _context.Users
+            IEnumerable<HospitalSanJoseModel.User> users = (from u in _context.Users
                                           where !u.Deleted
                                           select ReturnUserDTO(u)).ToList();
 
@@ -210,7 +212,7 @@ namespace HospitalSanJose.Controllers
         //{
 
         //}
-        private static UserDTO ReturnUserDTO(Models.User user) => new()
+        private static HospitalSanJoseModel.User ReturnUserDTO(Models.User user) => new()
         {
             Username = user.Username,
             Email = user.Email,

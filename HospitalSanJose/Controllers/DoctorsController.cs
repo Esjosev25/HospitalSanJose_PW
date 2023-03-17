@@ -6,16 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HospitalSanJose.Models;
+using AutoMapper;
 
 namespace HospitalSanJose.Controllers
 {
     public class DoctorsController : Controller
     {
         private readonly HospitalDbContext _context;
-
-        public DoctorsController(HospitalDbContext context)
+        private readonly IMapper _mapper;
+        public DoctorsController(HospitalDbContext context,IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Doctors
@@ -48,6 +50,7 @@ namespace HospitalSanJose.Controllers
         // GET: Doctors/Create
         public IActionResult Create()
         {
+            var doc = _mapper.Map<HospitalSanJoseModel.Doctor>(_context.Doctors.FirstOrDefault(d=>d.Id==1));
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id");
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();

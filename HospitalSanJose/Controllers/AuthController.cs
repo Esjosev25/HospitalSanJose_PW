@@ -2,6 +2,9 @@
 using HospitalSanJose.Models;
 using HospitalSanJoseModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace HospitalSanJose.Controllers
 {
@@ -30,6 +33,14 @@ namespace HospitalSanJose.Controllers
         [Route("dashboard")]
         public IActionResult Dashboard()
         {
+            var userid =HttpContext.Session.GetInt32("UserId");
+            var roles = (from ur in _context.UserRoles
+                         join r in _context.Roles on ur.RoleId equals r.Id
+                         where ur.UserId == userid
+                         select r.Name).ToList();
+
+            ViewData["Roles"] = roles;
+
             return View("Dashboard");
         }
 
@@ -78,6 +89,8 @@ namespace HospitalSanJose.Controllers
 
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetInt32("UserId", user.Id);
+
+                 
                 // Redirect to the home page
                 return RedirectToAction("Index", "Dashboard");
             }
@@ -116,7 +129,7 @@ namespace HospitalSanJose.Controllers
                 return View(register);
             }
             register.Response.ShowWarning = false;
-            var user = new User{
+            var user = new Models.User{
                 Password = register.Password1,
                 Email = register.Email,
                 FirstName = register.FirstName,
@@ -135,6 +148,7 @@ namespace HospitalSanJose.Controllers
             _logger.LogInformation($"Se registró el usuario {user.Username} con el correo {user.Email}");
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetInt32("UserId", user.Id);
+
             return RedirectToAction("dashboard");
 
         }

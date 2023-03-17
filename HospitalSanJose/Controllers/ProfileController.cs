@@ -36,8 +36,6 @@ namespace HospitalSanJose.Controllers
 
             var name = HttpContext.Session.GetString("Username");
             var id = HttpContext.Session.GetInt32("UserId");
-            if (name == null || id == null)
-                return Redirect("/auth/login");
 
             var user = await _context.Users.FindAsync(id);
             if (_context.PersonalInfos == null || user == null)
@@ -64,8 +62,6 @@ namespace HospitalSanJose.Controllers
 
             var name = HttpContext.Session.GetString("Username");
             var id = HttpContext.Session.GetInt32("UserId");
-            if (name == null || id == null)
-                return Redirect("/auth/login");
             var user = await _context.Users.FindAsync(id);
             if (id == null || _context.PersonalInfos == null || user == null)
             {

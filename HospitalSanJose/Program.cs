@@ -1,6 +1,9 @@
+using AutoMapper;
 using CurrieTechnologies.Razor.SweetAlert2;
 using HospitalSanJose.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +12,13 @@ builder.Services.AddDbContext<HospitalDbContext>(options =>
                     options.UseMySQL(connectionString: builder.Configuration.GetConnectionString("HospitalDB")));
 
 builder.Services.AddDistributedMemoryCache();
+
+var configuration = new MapperConfiguration(cfg => {
+    cfg.CreateMap<User, HospitalSanJoseModel.User>().ReverseMap();
+    //cfg.CreateMap<Doctor, HospitalSanJoseModel.Doctor>().ReverseMap();
+});
+
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddSession(options =>
 {
