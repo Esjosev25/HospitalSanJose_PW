@@ -53,14 +53,31 @@ namespace HospitalSanJose.Controllers
         }
 
         // GET: PersonalInfoes/Create
-        public IActionResult Create()
+        public IActionResult Create(int? Id)
         {
             var name = HttpContext.Session.GetString("Username");
             var userId = HttpContext.Session.GetInt32("UserId");
             if (name == null || userId == null)
                 return Redirect("/auth/login");
+            if(Id!= null)
+            {
+                var user = _context.Users.FirstOrDefault(u => u.Id == Id);
+                if (user == null)
+                    return NotFound();
+                var users = new List<User>
+                {
+                    user
+                   
+                };
+                users.AddRange(_context.Users.Where(u => u.Id != Id));
+                ViewData["UserId"] = new SelectList(users, "Id", "Username");
+
+            }
+            else
+            {
 
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Username");
+            }
             return View();
         }
 
@@ -76,7 +93,16 @@ namespace HospitalSanJose.Controllers
             if (personalInfoDb != null)
             {
                 //Usuario ya posee informacion asociada
-                ViewData["UserId"] = new SelectList(_context.Users, "Id", "Username", personalInfo.UserId);
+                var user = _context.Users.FirstOrDefault(u => u.Id == personalInfo.UserId);
+                if (user == null)
+                    return NotFound();
+                var users = new List<User>
+                {
+                    user
+
+                };
+                users.AddRange(_context.Users.Where(u => u.Id != personalInfo.UserId));
+                ViewData["UserId"] = new SelectList(users, "Id", "Username", personalInfo.UserId);
                 return View(personalInfo);
             }
 
@@ -196,6 +222,15 @@ namespace HospitalSanJose.Controllers
         private bool PersonalInfoExists(int id)
         {
             return (_context.PersonalInfos?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        public async Task<IActionResult> EditByUserID(int id)
+        {
+            var personalInfo = await _context.PersonalInfos.Include(u => u.User).FirstOrDefaultAsync(u => u.UserId == id);
+            if (personalInfo != null)
+              return  Redirect($"/PersonalInfoes/Edit/{personalInfo.Id}");
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

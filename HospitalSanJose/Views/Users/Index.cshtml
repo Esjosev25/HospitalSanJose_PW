@@ -57,7 +57,7 @@
                     <td>
                         @if (item.Activated)
                         {
-                            <a class="btn text-success">
+                            <a href="@Url.Action("EditByUserID","PersonalInfoes")/@item.Id" class="btn text-success">
                                 <i class="bi bi-person-check"></i>
                             </a>
 
@@ -65,7 +65,7 @@
                         }
                         else
                         {
-                            <a class="btn text-danger">
+                            <a href="@Url.Action("Create","PersonalInfoes")/@item.Id" class="btn text-danger">
                                 <i class="bi bi-person-dash"></i>
                             </a>
                         }
@@ -74,7 +74,7 @@
                     <td>
                         @if (item.IsLocked)
                         {
-                            <a class="btn text-warning" >
+                            <a href="@Url.Action("BlockUser","Users")/@item.Id" class="btn text-warning">
                                 <i class="bi bi-lock"></i>
                             </a>
 
@@ -83,7 +83,7 @@
                         else
                         {   
 
-                            <a class="btn text-warning">
+                            <a  href="@Url.Action("BlockUser","Users")/@item.Id" class="btn text-warning">
                                 <i class="bi bi-unlock"></i>
                             </a>
                         }

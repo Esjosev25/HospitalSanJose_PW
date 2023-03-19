@@ -208,10 +208,23 @@ namespace HospitalSanJose.Controllers
             return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        //private User GetUserById()
-        //{
+        public async Task<IActionResult> BlockUser(int id)
+        {
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'HospitalDbContext.Users'  is null.");
+            }
+            var user = await _context.Users.FindAsync(id);
+            if(user == null)
+                return NotFound();
 
-        //}
-     
+            user.IsLocked = !user.IsLocked;
+            _context.Users.Update(user);
+            
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

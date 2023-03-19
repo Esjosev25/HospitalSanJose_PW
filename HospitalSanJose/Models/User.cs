@@ -24,7 +24,7 @@ public partial class User
     public byte[]? Image { get; set; }
     [DisplayName("Eliminado")]
     public bool Deleted { get; set; }
-    [DisplayName("Estado")]
+    [DisplayName("Estado Perfil")]
     public bool Activated { get; set; }
 
     public string Username { get; set; } = null!;
