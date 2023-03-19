@@ -42,15 +42,25 @@
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
         </div>
-
         <div class="row mb-3">
-            <label asp-for="Password" class="col-md-4 col-lg-3 col-form-label"></label>
+            <label class="col-md-4 col-lg-3 col-form-label" for="changePassword">
+                Cambiar Contraseña
+            </label>
             <div class="col-md-8 col-lg-9">
-
-                <input asp-for="Password" type="password" value="@Model.Password" class="form-control" />
-
+                <input class="form-check-input" type="checkbox" for="changePassword"  onclick="changePassword()" />
             </div>
         </div>
+
+        <div style="display: none;" id="changePassword" class="row mb-3">
+                <label asp-for="Password" class="col-md-4 col-lg-3 col-form-label"></label>
+                <div class="col-md-8 col-lg-9">
+
+                    <input asp-for="Password" type="password" value="@Model.Password" class="form-control" />
+
+                </div>
+            </div>
+        
+       
 
         <div class="row mb-3">
             <label class="col-md-4 col-lg-3 col-form-label" asp-for="Activated">
@@ -86,6 +96,14 @@
 }
 @section Scripts {
     @{
+        <script>
+
+
+            const changePassword = () => {
+                $(`#changePassword`).toggle();
+            }
+        </script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
     }
 }

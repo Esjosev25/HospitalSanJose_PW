@@ -34,6 +34,7 @@ namespace HospitalSanJose.Controllers
         public IActionResult Dashboard()
         {
             var userid =HttpContext.Session.GetInt32("UserId");
+            var username = HttpContext.Session.GetString("Username");
             var roles = (from ur in _context.UserRoles
                          join r in _context.Roles on ur.RoleId equals r.Id
                          where ur.UserId == userid

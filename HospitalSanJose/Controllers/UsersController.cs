@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using HospitalSanJose.Models;
 using HospitalSanJoseModel;
 using AutoMapper;
+using System.Collections.Generic;
 
 namespace HospitalSanJose.Controllers
 {
@@ -17,15 +18,15 @@ namespace HospitalSanJose.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
 
             if (_context.Users == null)
                 return Problem("Entity set 'HospitalDbContext.Users'  is null.");
 
-            IEnumerable<HospitalSanJoseModel.User> users = (from u in _context.Users
-                                          where !u.Deleted
-                                          select ReturnUserDTO(u)).ToList();
+            var users = _mapper.Map<List<HospitalSanJoseModel.User>>((from u in _context.Users
+                                                                      where !u.Deleted
+                                                                      select u).ToList());
 
             return View(users);
 
@@ -48,7 +49,7 @@ namespace HospitalSanJose.Controllers
                 return NotFound();
             }
 
-            return View(ReturnUserDTO(user));
+            return View(_mapper.Map<HospitalSanJoseModel.User>(user));
         }
 
 
@@ -101,7 +102,7 @@ namespace HospitalSanJose.Controllers
             {
                 return NotFound();
             }
-            var userResult = ReturnUserDTO(user);
+            var userResult = _mapper.Map<HospitalSanJoseModel.User>(user);
             return View(userResult);
         }
 
@@ -120,11 +121,11 @@ namespace HospitalSanJose.Controllers
 
             user.Email = user.Email.Trim();
             user.Username = user.Username.Trim();
-
+            var userResult = _mapper.Map<HospitalSanJoseModel.User>(user);
             if (ModelState.IsValid)
             {
                 var response = new HospitalSanJoseModel.Response();
-                var userResult = ReturnUserDTO(user);
+                
                 var username = _context.Users.FirstOrDefault(u => (u.Username == user.Username || u.Email == user.Email) && u.Id != user.Id);
 
                 if (username != null && !username.Deleted)
@@ -137,14 +138,13 @@ namespace HospitalSanJose.Controllers
                 }
                 try
                 {
-                    //var userDB = _context.Users.FirstOrDefault(u => u.Id == id);
-                    //if (userDB != null && user.Password != userDB.Password)
-                    //{
-                    //    string salt = BCrypt.Net.BCrypt.GenerateSalt();
-                    //    user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
+                    var userDB = _context.Users.AsNoTracking().First(u => u.Id == id);
+                    if ( user.Password != userDB.Password)
+                    {
+                        string salt = BCrypt.Net.BCrypt.GenerateSalt();
+                        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
 
-                    //}
-                    
+                    }
                     _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
@@ -161,7 +161,7 @@ namespace HospitalSanJose.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(ReturnUserDTO(user));
+            return View(userResult);
         }
 
         // GET: Users/Delete/5
@@ -212,18 +212,6 @@ namespace HospitalSanJose.Controllers
         //{
 
         //}
-        private static HospitalSanJoseModel.User ReturnUserDTO(Models.User user) => new()
-        {
-            Username = user.Username,
-            Email = user.Email,
-            Activated = user.Activated,
-            Deleted = user.Deleted,
-            FirstName = user.FirstName,
-            Id = user.Id,
-            Image = user.Image,
-            IsLocked = user.IsLocked,
-            LastName = user.LastName,
-            Password = user.Password,
-        };
+     
     }
 }
