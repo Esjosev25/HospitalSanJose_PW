@@ -154,6 +154,21 @@ namespace HospitalSanJose.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: AssingRoles
+        public async Task<IActionResult> AssingRoles()
+        {
+            return _context.Roles != null ?
+                        View(await _context.Roles.ToListAsync()) :
+                        Problem("Entity set 'HospitalDbContext.Roles'  is null.");
+        }
+        // GET: UserRoles
+        public async Task<IActionResult> UserRoles()
+        {
+            return _context.Roles != null ?
+                        View(await _context.Roles.ToListAsync()) :
+                        Problem("Entity set 'HospitalDbContext.Roles'  is null.");
+        }
+
         private bool RoleExists(int id)
         {
           return (_context.Roles?.Any(e => e.Id == id)).GetValueOrDefault();

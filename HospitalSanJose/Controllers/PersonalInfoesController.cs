@@ -75,8 +75,8 @@ namespace HospitalSanJose.Controllers
             }
             else
             {
-
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Username");
+                //mostrar unicamente los usuarios que no tengan informacion asociada
+            ViewData["UserId"] = new SelectList(_context.Users.Where(u=> !u.Activated), "Id", "Username");
             }
             return View();
         }

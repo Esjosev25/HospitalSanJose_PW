@@ -2,6 +2,7 @@
 using HospitalSanJose.Models;
 using HospitalSanJoseModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie.Extensions;
 
 namespace HospitalSanJose.Controllers
 {
@@ -150,6 +151,7 @@ namespace HospitalSanJose.Controllers
             var username = HttpContext.Session.GetString("Username");
             var userRoles = (from ur in _context.UserRoles
                          join r in _context.Roles on ur.RoleId equals r.Id
+                         orderby r.Name ascending
                          where ur.UserId == userid
                          select r.Name).ToList();
             var roles = string.Join(",",userRoles);
