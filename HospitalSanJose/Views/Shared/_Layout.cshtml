@@ -1,9 +1,20 @@
 ﻿
+
 @{
-    var admin = ViewBag.Roles != null ? ViewBag.Roles.Contains("Admin") : false;
-    var paciente = ViewBag.Roles != null ?  ViewBag.Roles.Contains("Paciente") : false;
-    var secretaria = ViewBag.Roles != null ? ViewBag.Roles.Contains("Secretaria") : false;
-    var doctor = ViewBag.Roles != null ? ViewBag.Roles.Contains("Doctor") : false;
+
+    var roles = Context.Session.GetString("Roles");
+    var admin = false;
+    var paciente = false;
+    var secretaria = false;
+    var doctor = false;
+    if(roles!= null)
+    {
+        admin = roles.Contains("Admin");
+        paciente = roles.Contains("Paciente");
+        secretaria = roles.Contains("Secretaria");
+        doctor = roles.Contains("Doctor");
+    }
+    
     
 }
 <!DOCTYPE html>

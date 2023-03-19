@@ -2,13 +2,10 @@
 using HospitalSanJose.Models;
 using HospitalSanJoseModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace HospitalSanJose.Controllers
 {
-    public class AuthController : Controller
+  public class AuthController : Controller
     {
 
         private readonly HospitalDbContext _context;
@@ -33,15 +30,8 @@ namespace HospitalSanJose.Controllers
         [Route("dashboard")]
         public IActionResult Dashboard()
         {
-            var userid =HttpContext.Session.GetInt32("UserId");
-            var username = HttpContext.Session.GetString("Username");
-            var roles = (from ur in _context.UserRoles
-                         join r in _context.Roles on ur.RoleId equals r.Id
-                         where ur.UserId == userid
-                         select r.Name).ToList();
 
-            ViewData["Roles"] = roles;
-
+            SaveRolesInSession();
             return View("Dashboard");
         }
 
@@ -154,7 +144,17 @@ namespace HospitalSanJose.Controllers
 
         }
 
-
+        private void SaveRolesInSession()
+        {
+            var userid = HttpContext.Session.GetInt32("UserId");
+            var username = HttpContext.Session.GetString("Username");
+            var userRoles = (from ur in _context.UserRoles
+                         join r in _context.Roles on ur.RoleId equals r.Id
+                         where ur.UserId == userid
+                         select r.Name).ToList();
+            var roles = string.Join(",",userRoles);
+            HttpContext.Session.SetString("Roles", roles);
+        }
         private void logInformation(string Message)
         {
             TimeZoneInfo cstZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
