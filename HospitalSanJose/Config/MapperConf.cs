@@ -8,6 +8,7 @@ namespace HospitalSanJose.Config
     {
         public MapperConf() {
             CreateMap<HospitalSanJoseModel.User, Models.User>().ReverseMap();
+            CreateMap<HospitalSanJoseModel.UserRole, Models.UserRole>().ReverseMap();
         }
     }
 }

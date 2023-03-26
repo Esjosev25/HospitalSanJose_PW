@@ -394,11 +394,6 @@ public partial class HospitalDbContext : DbContext
               .HasForeignKey(d => d.FunctionId)
               .OnDelete(DeleteBehavior.ClientSetNull)
               .HasConstraintName("user_functions_ibfk_1");
-
-      entity.HasOne(d => d.Role).WithMany(p => p.RoleFunctions)
-              .HasForeignKey(d => d.RoleId)
-              .OnDelete(DeleteBehavior.ClientSetNull)
-              .HasConstraintName("user_functions_ibfk_2");
     });
 
     modelBuilder.Entity<UserRole>(entity =>

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HospitalSanJose.Models;
+using AutoMapper;
+using HospitalSanJoseModel;
 
 namespace HospitalSanJose.Controllers
 {
@@ -13,17 +15,33 @@ namespace HospitalSanJose.Controllers
     public class UserRolesController : Controller
     {
         private readonly HospitalDbContext _context;
+        private readonly IMapper _mapper;
 
-        public UserRolesController(HospitalDbContext context)
+        public UserRolesController(HospitalDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: UserRoles
         public async Task<IActionResult> Index()
         {
-            var hospitalDbContext = _context.UserRoles.Include(u => u.Role).Include(u => u.User);
-            return View(await hospitalDbContext.ToListAsync());
+            //var hospitalDbContext = _context.UserRoles.Include(u => u.Role).Include(u => u.User);
+            //_mapper.Map<List<HospitalSanJoseModel.UserRole>>
+            var userRoles = (from ur in _context.UserRoles
+                             join r in _context.Roles on ur.RoleId equals r.Id
+                             join u in _context.Users on ur.UserId equals u.Id
+                             orderby u.FirstName ascending
+                             where !u.Deleted
+                             select new Models.UserRole
+                             {
+                                 UserId = ur.Id,
+                                 RoleId = ur.RoleId,
+                                 User = u,
+                                 Role = r
+                             }
+                              ).ToList();
+            return View(userRoles);
         }
 
 
@@ -41,7 +59,7 @@ namespace HospitalSanJose.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,RoleId")] UserRole userRole)
+        public async Task<IActionResult> Create([Bind("Id,UserId,RoleId")] Models.UserRole userRole)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +95,7 @@ namespace HospitalSanJose.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,RoleId")] UserRole userRole)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,RoleId")] Models.UserRole userRole)
         {
             if (id != userRole.Id)
             {

@@ -1,5 +1,4 @@
-using AutoMapper;
-using CurrieTechnologies.Razor.SweetAlert2;
+
 using HospitalSanJose.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -25,7 +24,6 @@ builder.Services.AddSession(options =>
 });
 
 
-builder.Services.AddSweetAlert2();
 
 
 var app = builder.Build();

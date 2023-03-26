@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HospitalSanJose.Models;
+namespace HospitalSanJoseAPI.Models;
 
 public partial class Role
 {
