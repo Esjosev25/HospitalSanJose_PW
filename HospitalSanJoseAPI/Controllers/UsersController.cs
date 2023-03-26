@@ -89,7 +89,9 @@ namespace HospitalSanJoseAPI.Controllers
 
             try
             {
+
                 await _context.SaveChangesAsync();
+                _logger.LogInformation($"Se actualizó el usuario Id: {id} username: {user.Username} email: {user.Email}");
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -122,6 +124,7 @@ namespace HospitalSanJoseAPI.Controllers
                 user.IsLocked = !user.IsLocked;
                 _context.Update(user);
                 await _context.SaveChangesAsync();
+                _logger.LogInformation($"Se bloqueó el usuario Id: {id} username: {user.Username} email: {user.Email}");
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -162,6 +165,7 @@ namespace HospitalSanJoseAPI.Controllers
 
             var newUser = _mapper.Map<User>(user);
             _context.Users.Add(newUser);
+            //TODO: Asignar rol de usuario
             await _context.SaveChangesAsync();
             _logger.LogInformation($"Se registró el usuario {user.Username} con el correo {user.Email}");
             return CreatedAtAction("GetUser", new { id = newUser.Id }, newUser);
@@ -183,7 +187,7 @@ namespace HospitalSanJoseAPI.Controllers
             user.Deleted = true;
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
-
+            _logger.LogInformation($"Se eliminó el usuario Id: {id} username: {user.Username} email: {user.Email}");
             return NoContent();
         }
 

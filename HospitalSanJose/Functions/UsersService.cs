@@ -11,10 +11,10 @@ namespace HospitalSanJoseModel.Functions
         }
 
 
-        public async Task<User> GetById(int? id)
+        public async Task<User?> GetById(int? id)
         {
 
-            return await Get<User>($"{ControllerUrl}/{id}");
+            return await Get<User?>($"{ControllerUrl}/{id}");
 
         }
         public async Task<User> Post(User user)

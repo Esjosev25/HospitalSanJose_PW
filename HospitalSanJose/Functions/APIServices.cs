@@ -35,7 +35,7 @@ namespace HospitalSanJoseModel.Functions
             {
 
             }
-            return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+            return JsonConvert.DeserializeObject<T?>(await response.Content.ReadAsStringAsync());
         }
 
         protected async Task<T?> Post<T>(T content, string route = "")
