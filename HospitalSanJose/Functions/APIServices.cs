@@ -10,9 +10,9 @@ namespace HospitalSanJoseModel.Functions
 
         protected readonly int Timeout = 30;
         private readonly string Url = "https://localhost:7256/";
-        private readonly HttpStatusCode[] ErrorCodes = {  HttpStatusCode.InternalServerError };
-       
-        protected  async Task<T> Get<T>(string route = "")
+        private readonly HttpStatusCode[] ErrorCodes = { HttpStatusCode.InternalServerError };
+
+        protected async Task<T> Get<T>(string route = "")
         {
 
             HttpClientHandler clientHandler = new()
@@ -58,9 +58,9 @@ namespace HospitalSanJoseModel.Functions
                 throw new Exception(response.StatusCode.ToString());
             }
             return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
-            
+
         }
-        protected async Task<T?> Put<T>(T content, string path = "")
+        protected async Task<T?> Put<T>(T content, string route = "")
         {
             HttpClientHandler clientHandler = new()
             {
@@ -74,7 +74,7 @@ namespace HospitalSanJoseModel.Functions
             var json = JsonConvert.SerializeObject(content);
             var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PutAsync(Url + path, jsonContent);
+            var response = await httpClient.PutAsync(Url + route, jsonContent);
             if (ErrorCodes.Contains(response.StatusCode))
             {
                 throw new Exception(
@@ -85,7 +85,7 @@ namespace HospitalSanJoseModel.Functions
             return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
         }
 
-        protected async Task Delete(string path = "")
+        protected async Task Patch(string route = "")
         {
             HttpClientHandler clientHandler = new()
             {
@@ -96,7 +96,31 @@ namespace HospitalSanJoseModel.Functions
                 Timeout = TimeSpan.FromSeconds(Timeout)
             };
 
-            var response = await httpClient.DeleteAsync(Url + path);
+
+            var response = await httpClient.PatchAsync(Url + route, null);
+            if (ErrorCodes.Contains(response.StatusCode))
+            {
+                throw new Exception(
+                    $"Code: {response.StatusCode.ToString()}"
+                );
+                throw new Exception(response.StatusCode.ToString());
+            }
+            
+        }
+
+
+        protected async Task Delete(string route = "")
+        {
+            HttpClientHandler clientHandler = new()
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            };
+            HttpClient httpClient = new(clientHandler)
+            {
+                Timeout = TimeSpan.FromSeconds(Timeout)
+            };
+
+            var response = await httpClient.DeleteAsync(Url + route);
             if (ErrorCodes.Contains(response.StatusCode))
             {
                 throw new Exception(response.StatusCode.ToString());

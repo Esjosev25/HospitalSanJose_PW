@@ -33,7 +33,7 @@ namespace HospitalSanJoseModel.Functions
 
         public async Task ToggleBlockUser(int? id)
         {
-            await Put($"{ControllerUrl}/Block/{id}");
+            await Patch($"{ControllerUrl}/Block/{id}");
         }
     }
 }
