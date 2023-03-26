@@ -2,6 +2,7 @@
 using HospitalSanJoseModel;
 using AutoMapper;
 using HospitalSanJoseModel.Functions;
+using Azure;
 
 namespace HospitalSanJose.Controllers
 {
@@ -45,6 +46,7 @@ namespace HospitalSanJose.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
+           
             return View();
         }
 
@@ -58,11 +60,16 @@ namespace HospitalSanJose.Controllers
             user.Email = user.Email.Trim();
             user.Username = user.Username.Trim();
             user.Password = user.Username.Trim();
-            
+            user.Response = null;
             if (user.Email == null || user.Username ==null)
                 return View(user);
 
-            await _userService.Post(user);
+            var response = await _userService.Post(user);
+            if (response != null && response.Response != null)
+            {
+                return View(response);
+            }
+
             _logger.LogInformation($"Se registró el usuario {user.Username} con el correo {user.Email}");
 
             return RedirectToAction(nameof(Index));
@@ -96,7 +103,7 @@ namespace HospitalSanJose.Controllers
             user.Email = user.Email.Trim();
             user.Username = user.Username.Trim();
             user.Password = user.Username.Trim();
-
+            user.Response = null;
             if (ModelState.IsValid)
             {
                 var response = await _userService.Put(user, id);

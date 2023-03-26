@@ -147,16 +147,16 @@ namespace HospitalSanJoseAPI.Controllers
                 return Problem("Entity set 'HospitalDbContext.Users'  is null.");
             }
             var userDB = _context.Users.FirstOrDefault(u => u.Username == user.Username || u.Email == user.Email);
-             
+            var response = new HospitalSanJoseModel.Response();
+            user.Response = response;
             if (userDB != null)
             {
-                return BadRequest(new
-                {
-                    message = "Correo o Usuario ya existen, intenta con uno nuevo",
-                    error = true
-                });
+                
+                response.AlertMessage = "Correo o Usuario ya existen, intenta con uno nuevo";
+                response.AlertIcon = "error";
+                
+                return BadRequest(user);
             }
-
             string salt = BCrypt.Net.BCrypt.GenerateSalt();
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
 

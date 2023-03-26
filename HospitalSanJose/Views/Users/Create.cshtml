@@ -1,4 +1,4 @@
-﻿@model HospitalSanJose.Models.User
+﻿@model HospitalSanJoseModel.User
 
 @{
     ViewData["Title"] = "Create";
@@ -40,23 +40,6 @@
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-
-  @*          <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Deleted" /> @Html.DisplayNameFor(model => model.Deleted)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Activated" /> @Html.DisplayNameFor(model => model.Activated)
-                </label>
-            </div>
-           
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsLocked" /> @Html.DisplayNameFor(model => model.IsLocked)
-                </label>
-            </div>*@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -70,4 +53,13 @@
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="~/js/sweetAlert.js"></script>
+
+@if (Model != null && Model.Response != null && Model.Response.ShowWarning)
+{
+    <script>
+        showAlert('@Model.Response.AlertTitle', '@Model.Response.AlertMessage', '@Model.Response.AlertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));
+    </script>
 }

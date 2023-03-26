@@ -25,6 +25,6 @@ namespace HospitalSanJoseModel
         public string Username { get; set; } = null!;
         [DisplayName("Bloqueado")]
         public bool IsLocked { get; set; }
-
+        public Response? Response { get; set; }
     }
 }
