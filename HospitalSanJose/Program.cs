@@ -1,5 +1,6 @@
 
 using HospitalSanJose.Models;
+using HospitalSanJoseModel.Functions;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -23,6 +24,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddSingleton<UsersService>();
 
 
 

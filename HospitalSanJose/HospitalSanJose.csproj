@@ -22,11 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Functions\" />
     <Folder Include="Views\Dashboard\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HospitalSanJoseAPI\HospitalSanJoseAPI.csproj" />
     <ProjectReference Include="..\HospitalSanJoseModel\HospitalSanJoseModel.csproj" />
   </ItemGroup>
 

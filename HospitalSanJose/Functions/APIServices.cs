@@ -3,14 +3,14 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Text;
 
-namespace ClasificacionPeliculas.Functions
+namespace HospitalSanJoseModel.Functions
 {
     public class APIServices
     {
 
         protected readonly int Timeout = 30;
-        private readonly string Url = "https://localhost:7075/";
-        private readonly HttpStatusCode[] ErrorCodes = { HttpStatusCode.NotFound, HttpStatusCode.InternalServerError, HttpStatusCode.BadRequest };
+        private readonly string Url = "https://localhost:7256/";
+        private readonly HttpStatusCode[] ErrorCodes = {  HttpStatusCode.InternalServerError };
        
         protected  async Task<T> Get<T>(string route = "")
         {
@@ -26,7 +26,14 @@ namespace ClasificacionPeliculas.Functions
             var response = await httpClient.GetAsync(Url + route);
             if (ErrorCodes.Contains(response.StatusCode))
             {
+                throw new Exception(
+                    $"Code:${response.StatusCode}\nMessage:${response.Content}"
+                );
                 throw new Exception(response.StatusCode.ToString());
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+
             }
             return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
         }
@@ -70,6 +77,9 @@ namespace ClasificacionPeliculas.Functions
             var response = await httpClient.PutAsync(Url + path, jsonContent);
             if (ErrorCodes.Contains(response.StatusCode))
             {
+                throw new Exception(
+                    $"Code: {response.StatusCode.ToString()}"
+                );
                 throw new Exception(response.StatusCode.ToString());
             }
             return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());

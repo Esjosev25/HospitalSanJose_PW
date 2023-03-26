@@ -1,32 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HospitalSanJose.Models;
 using HospitalSanJoseModel;
 using AutoMapper;
-using System.Collections.Generic;
+using HospitalSanJoseModel.Functions;
 
 namespace HospitalSanJose.Controllers
 {
   public class UsersController : Controller
     {
-        private readonly HospitalDbContext _context;
         private readonly IMapper _mapper;
-        public UsersController(HospitalDbContext context,IMapper mapper)
+        private readonly ILogger<UsersController> _logger;
+        private readonly UsersService _userService;
+        public UsersController(UsersService userService, IMapper mapper, ILogger<UsersController> logger)
         {
-            _context = context;
             _mapper = mapper;
+            _userService = userService;
+            _logger = logger;
         }
 
         // GET: Users
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
 
-            if (_context.Users == null)
-                return Problem("Entity set 'HospitalDbContext.Users'  is null.");
-
-            var users = _mapper.Map<List<HospitalSanJoseModel.User>>((from u in _context.Users
-                                                                      where !u.Deleted
-                                                                      select u).ToList());
+            var users = await _userService.GetList();
 
             return View(users);
 
@@ -37,19 +32,12 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Details(int? id)
         {
 
-            if (id == null || _context.Users == null)
+            var user = await _userService.GetById(id);
+            if (user.Id == 0)
             {
                 return NotFound();
             }
-
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(_mapper.Map<HospitalSanJoseModel.User>(user));
+            return View(user);
         }
 
 
@@ -65,22 +53,17 @@ namespace HospitalSanJose.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Password,NeedChangePassword,Email,FirstName,LastName,Image,Deleted,Activated,Username,IsLocked")] Models.User user)
+        public async Task<IActionResult> Create([Bind("Id,Password,NeedChangePassword,Email,FirstName,LastName,Image,Deleted,Activated,Username,IsLocked")] HospitalSanJoseModel.User user)
         {
             user.Email = user.Email.Trim();
             user.Username = user.Username.Trim();
-            var userDB = _context.Users.FirstOrDefault(u => u.Username == user.Username || u.Email == user.Email);
-            if (userDB != null && !userDB.Deleted)
+            user.Password = user.Username.Trim();
+            
+            if (user.Email == null || user.Username ==null)
                 return View(user);
 
-            // Call the Register method to set its properties
-            string salt = BCrypt.Net.BCrypt.GenerateSalt();
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
-            // Add the user to the database
-            _context.Users.Add(user);
-            _context.SaveChanges();
-            await _context.SaveChangesAsync();
-            //_logger.LogInformation($"Se registró el usuario {user.Username} con el correo {user.Email}");
+            await _userService.Post(user);
+            _logger.LogInformation($"Se registró el usuario {user.Username} con el correo {user.Email}");
 
             return RedirectToAction(nameof(Index));
         }
@@ -92,13 +75,10 @@ namespace HospitalSanJose.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             if (name == null || userId == null)
                 return Redirect("/auth/Login");
-            if (id == null || _context.Users == null)
-            {
-                return NotFound();
-            }
 
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+
+            var user = await _userService.GetById(id);
+            if (user.Id == 0)
             {
                 return NotFound();
             }
@@ -111,71 +91,30 @@ namespace HospitalSanJose.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Password,NeedChangePassword,Email,FirstName,LastName,Image,Deleted,Activated,Username,IsLocked")] Models.User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Password,NeedChangePassword,Email,FirstName,LastName,Image,Deleted,Activated,Username,IsLocked")] User user)
         {
-            
-            if (id != user.Id)
-            {
-                return NotFound();
-            }
-
             user.Email = user.Email.Trim();
             user.Username = user.Username.Trim();
-            var userResult = _mapper.Map<HospitalSanJoseModel.User>(user);
+            user.Password = user.Username.Trim();
+
             if (ModelState.IsValid)
             {
-                var response = new HospitalSanJoseModel.Response();
-                
-                var username = _context.Users.FirstOrDefault(u => (u.Username == user.Username || u.Email == user.Email) && u.Id != user.Id);
-
-                if (username != null && !username.Deleted)
+                var response = await _userService.Put(user, id);
+                if (response != null)
                 {
-
-                    userResult.Response = response;
-                    response.AlertMessage = "Correo/Email ya se encuentran registrados";
-
-                    return View(userResult);
-                }
-                try
-                {
-                    var userDB = _context.Users.AsNoTracking().First(u => u.Id == id);
-                    if ( user.Password != userDB.Password)
-                    {
-                        string salt = BCrypt.Net.BCrypt.GenerateSalt();
-                        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
-
-                    }
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return View(response);
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(userResult);
+            return View(user);
         }
 
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
 
-            if (id == null || _context.Users == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            var user = await _userService.GetById(id);
+            if (user.Id == 0)
             {
                 return NotFound();
             }
@@ -188,41 +127,17 @@ namespace HospitalSanJose.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Users == null)
-            {
-                return Problem("Entity set 'HospitalDbContext.Users'  is null.");
-            }
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
-            {
-                user.Deleted = true;
-                _context.Users.Update(user);
-            }
-
-            await _context.SaveChangesAsync();
+            await _userService.Delete(id);
+            _logger.LogInformation($"Se eliminó el usuario con id: {id}");
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int id)
-        {
-            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+     
 
         public async Task<IActionResult> BlockUser(int id)
         {
-            if (_context.Users == null)
-            {
-                return Problem("Entity set 'HospitalDbContext.Users'  is null.");
-            }
-            var user = await _context.Users.FindAsync(id);
-            if(user == null)
-                return NotFound();
+            await _userService.ToggleBlockUser(id);
 
-            user.IsLocked = !user.IsLocked;
-            _context.Users.Update(user);
-            
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
