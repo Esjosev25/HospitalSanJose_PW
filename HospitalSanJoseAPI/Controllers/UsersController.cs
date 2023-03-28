@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HospitalSanJoseAPI.Models;
+using DTO = HospitalSanJoseModel.DTO;
 using AutoMapper;
 using System.Linq;
 
@@ -33,6 +34,30 @@ namespace HospitalSanJoseAPI.Controllers
                                                                                    select u).ToListAsync());
             return Ok(users);
         }
+
+        // GET: api/Users/InactiveUsers
+        [HttpGet("InactiveUsers")]
+        public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.User>>> GetInactiveUsers(int id =0)
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+             var usersList = new List<HospitalSanJoseModel.User>();
+            if (id != 0)
+            {
+                var user =  _mapper.Map<HospitalSanJoseModel.User>(await _context.Users.FindAsync(id));
+                if(user!=null)
+                usersList.Add(user);
+            }
+             
+            var users = _mapper.Map<IEnumerable<HospitalSanJoseModel.User>>(await (from u in _context.Users
+                                                                                   where !u.Activated && !u.Deleted && u.Id != id
+                                                                                   select u).ToListAsync());
+            usersList.AddRange(users);
+            return Ok(usersList);
+        }
+
 
         // GET: api/Users/5
         [HttpGet("{id}")]
@@ -143,7 +168,7 @@ namespace HospitalSanJoseAPI.Controllers
         //// POST: api/Users
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<HospitalSanJoseModel.User>> PostUser(HospitalSanJoseModel.UserCreateDTO user)
+        public async Task<ActionResult<HospitalSanJoseModel.User>> PostUser(DTO.User.UserCreate user)
         {
             if (_context.Users == null)
             {

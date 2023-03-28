@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace HospitalSanJoseModel
+namespace HospitalSanJoseModel.DTO.User
 {
-  public class UserCreateDTO
+  public class UserCreate
     {
    
         public string Password { get; set; } = null!;
