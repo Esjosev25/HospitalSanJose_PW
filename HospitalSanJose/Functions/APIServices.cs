@@ -1,9 +1,9 @@
-﻿using HospitalSanJoseModel;
+﻿
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
 
-namespace HospitalSanJoseModel.Functions
+namespace HospitalSanJose.Functions
 {
     public class APIServices
     {
@@ -105,7 +105,7 @@ namespace HospitalSanJoseModel.Functions
                 );
                 throw new Exception(response.StatusCode.ToString());
             }
-            
+
         }
 
 
