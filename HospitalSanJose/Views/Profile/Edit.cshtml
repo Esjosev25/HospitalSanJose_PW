@@ -1,7 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model HospitalSanJose.Models.PersonalInfo
+@model HospitalSanJoseModel.PersonalInfo
 @{
     ViewData["Title"] = "Perfil";
 
@@ -108,27 +108,27 @@
         </div>
     }
 
-    @if(Model.PhoneNumber1 != null){
+    @if(Model.PhoneNumber != null){
     <div class="row mb-3">
-        <label asp-for="PhoneNumber1" class="col-md-4 col-lg-3 col-form-label"></label>
+        <label asp-for="PhoneNumber" class="col-md-4 col-lg-3 col-form-label"></label>
         <div class="col-md-8 col-lg-9">
-            <input asp-for="PhoneNumber1" class="form-control" />
-            <span asp-validation-for="PhoneNumber1" class="text-danger"></span>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
         </div>
     </div>
     }
-    @if (Model.PhoneNumber2 != null)
+    @if (Model.EmergencyPhoneNumber != null)
     {
         <div class="row mb-3">
-            <label asp-for="PhoneNumber2" class="col-md-4 col-lg-3 col-form-label"></label>
+            <label asp-for="EmergencyPhoneNumber" class="col-md-4 col-lg-3 col-form-label"></label>
             <div class="col-md-8 col-lg-9">
-                <input asp-for="PhoneNumber2" class="form-control" />
-                <span asp-validation-for="PhoneNumber2" class="text-danger"></span>
+                <input asp-for="EmergencyPhoneNumber" class="form-control" />
+                <span asp-validation-for="EmergencyPhoneNumber" class="text-danger"></span>
             </div>
         </div>
     }
 
-    @if (!Model.User.Activated)
+    @if (Model.User.Activated != null && !Model.User.Activated)
     {
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             Por favor contacta con administración para completar tu perfil
@@ -141,9 +141,17 @@
 </form>
 
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="~/js/sweetAlert.js"></script>
 
-        <script>
+@if (Model != null && Model.Response != null && Model.Response.ShowWarning)
+{
+    <script>
+        showAlert('@Model.Response.AlertTitle', '@Model.Response.AlertMessage', '@Model.Response.AlertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));
+    </script>
+}
+<script>
     function clearFileInput() {
         document.getElementById('uploadFile').value = "";
     }
-        </script>
+</script>

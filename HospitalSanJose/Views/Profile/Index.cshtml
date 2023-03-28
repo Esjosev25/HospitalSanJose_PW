@@ -1,4 +1,4 @@
-﻿@model HospitalSanJose.Models.PersonalInfo
+﻿@model HospitalSanJoseModel.PersonalInfo
 @{
     ViewData["Title"] = "Perfil";
     var AddressLine2 = !string.IsNullOrEmpty(Model.AddressLine2) ? ", " + Model.AddressLine2 : "";
@@ -36,18 +36,18 @@
         </div>
     }
 
-    @if (@Model.PhoneNumber1 != null)
+    @if (@Model.PhoneNumber != null)
     {
         <div class="row">
             <div class="col-lg-3 col-md-4 label">Numero de Teléfono</div>
-            <div class="col-lg-9 col-md-8">@Model.PhoneNumber1</div>
+            <div class="col-lg-9 col-md-8">@Model.PhoneNumber</div>
         </div>
     }
-    @if (@Model.PhoneNumber2 != null)
+    @if (@Model.EmergencyPhoneNumber != null)
     {
         <div class="row">
             <div class="col-lg-3 col-md-4 label">Numero de Emergencias</div>
-            <div class="col-lg-9 col-md-8">@Model.PhoneNumber2</div>
+            <div class="col-lg-9 col-md-8">@Model.EmergencyPhoneNumber</div>
         </div>
     }
     <div class="row">

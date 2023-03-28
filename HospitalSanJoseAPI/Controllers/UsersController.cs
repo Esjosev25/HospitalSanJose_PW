@@ -4,6 +4,7 @@ using HospitalSanJoseAPI.Models;
 using DTO = HospitalSanJoseModel.DTO;
 using AutoMapper;
 using System.Linq;
+using HospitalSanJoseModel.DTO.Profile;
 
 namespace HospitalSanJoseAPI.Controllers
 {
@@ -132,6 +133,58 @@ namespace HospitalSanJoseAPI.Controllers
 
             return NoContent();
         }
+        // PUT: api/Users/ChangePassword/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("ChangePassword/{id}")]
+        public async Task<IActionResult> ChangePassword(int id, ProfileChangePassword changePassword)
+        {
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                 var response = new HospitalSanJoseModel.Response();
+                changePassword.User = _mapper.Map<HospitalSanJoseModel.User>(user);
+                if (!BCrypt.Net.BCrypt.Verify( changePassword.OldPassword, user.Password)){
+                    response.AlertMessage = "Contrasena incorrecta";
+                    response.AlertIcon = "error";
+                    changePassword.Response = response;
+                    return BadRequest(changePassword);
+                }
+                if (changePassword.NewPassword != changePassword.ConfirmPassword)
+                {
+                    //Psw deben de ser iguales
+                    response.AlertMessage = "Las contrasenas deben de coincidir, intenta de nuevo";
+                    response.AlertIcon = "warning";
+                    changePassword.Response = response;
+                    return BadRequest(changePassword);
+                }
+                    string salt = BCrypt.Net.BCrypt.GenerateSalt();
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(changePassword.NewPassword, salt);
+                
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation($"Se bloqueó el usuario Id: {id} username: {user.Username} email: {user.Email}");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // PATCH: api/Users/Block/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("Block/{id}")]
@@ -165,6 +218,7 @@ namespace HospitalSanJoseAPI.Controllers
 
             return NoContent();
         }
+
         //// POST: api/Users
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

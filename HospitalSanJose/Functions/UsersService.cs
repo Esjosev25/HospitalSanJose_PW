@@ -1,4 +1,6 @@
 ﻿using HospitalSanJoseModel;
+using HospitalSanJoseModel.DTO.Profile;
+
 namespace HospitalSanJose.Functions
 {
     public class UsersService : APIServices
@@ -30,6 +32,10 @@ namespace HospitalSanJose.Functions
         public async Task<User> Put(User user, int id)
         {
             return await Put(user, $"{ControllerUrl}/{id}");
+        }
+        public async Task<ProfileChangePassword> ChangePassword(ProfileChangePassword changePassword, int id)
+        {
+            return await Put(changePassword, $"{ControllerUrl}/ChangePassword/{id}");
         }
         public async Task Delete(int? id)
         {
