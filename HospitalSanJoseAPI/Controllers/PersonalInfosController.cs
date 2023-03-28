@@ -99,6 +99,7 @@ namespace HospitalSanJoseAPI.Controllers
                 personalInfo.Response = response;
                 return BadRequest(personalInfo);
             }
+           
             var newPersonalInfo = _mapper.Map<PersonalInfo>(personalInfo);            
             _context.Entry(newPersonalInfo).State = EntityState.Modified;
 

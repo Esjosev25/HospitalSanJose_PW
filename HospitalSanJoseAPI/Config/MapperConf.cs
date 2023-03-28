@@ -18,6 +18,10 @@ namespace HospitalSanJose.Config
             CreateMap<DTO.PersonalInfo.PersonalInfoUpdate, PersonalInfo>().ReverseMap();
             #endregion
 
+            #region "Role Model"
+            CreateMap<HospitalSanJoseModel.Role, Role>().ReverseMap();
+            #endregion
+
             #region "UserRole Model"
             CreateMap<HospitalSanJoseModel.UserRole, UserRole>().ReverseMap();
             #endregion

@@ -26,6 +26,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddSingleton<UsersService>();
 builder.Services.AddSingleton<PersonalInfosService>();
+builder.Services.AddSingleton<RolesService>();
 
 
 
