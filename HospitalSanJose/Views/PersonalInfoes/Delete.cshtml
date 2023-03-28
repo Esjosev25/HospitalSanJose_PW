@@ -1,4 +1,4 @@
-﻿@model HospitalSanJose.Models.PersonalInfo
+﻿@model HospitalSanJoseModel.PersonalInfo
 
 @{
     ViewData["Title"] = "Delete";
@@ -17,22 +17,28 @@
             @Model.User.FirstName @Model.User.LastName (@Model.User.Username)
         </dd>
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.User.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.User.Email
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Dpi)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Dpi)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber1)
+            @Html.DisplayNameFor(model => model.PhoneNumber)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber1)
+            @Html.DisplayFor(model => model.PhoneNumber)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber2)
+            @Html.DisplayNameFor(model => model.EmergencyPhoneNumber)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber2)
+            @Html.DisplayFor(model => model.EmergencyPhoneNumber)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Birthdate)

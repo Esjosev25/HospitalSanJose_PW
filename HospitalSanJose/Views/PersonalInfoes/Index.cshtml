@@ -1,4 +1,4 @@
-﻿@model IEnumerable<HospitalSanJose.Models.PersonalInfo>
+﻿@model IEnumerable<HospitalSanJoseModel.PersonalInfo>
 
 @{
     ViewData["Title"] = "Index";
@@ -18,10 +18,10 @@
                     @Html.DisplayNameFor(model => model.Dpi)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.PhoneNumber1)
+                    @Html.DisplayNameFor(model => model.PhoneNumber)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.PhoneNumber2)
+                    @Html.DisplayNameFor(model => model.EmergencyPhoneNumber)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Birthdate)
@@ -45,16 +45,17 @@
             {
                 <tr>
                     <td>
+                        
                         @item.User.FirstName @item.User.LastName
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Dpi)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.PhoneNumber1)
+                        @Html.DisplayFor(modelItem => item.PhoneNumber)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.PhoneNumber2)
+                        @Html.DisplayFor(modelItem => item.EmergencyPhoneNumber)
                     </td>
                     <td>
                         @item.Birthdate.ToString("dd/MM/yyyy")
@@ -73,6 +74,7 @@
 
 
                     <td>
+                        <a href="@Url.Action("Details","Users", new {id= @item.UserId})"><i class="btn bi bi-file-person"></i></a> |
                         <a asp-action="Edit" asp-route-id="@item.Id"><i class="btn bi bi-pencil"></i></a> |
                         <a asp-action="Details" asp-route-id="@item.Id"><i class="btn bi bi-card-text"></i></a> |
                         <a asp-action="Delete" asp-route-id="@item.Id"><i class="btn bi bi-trash3"></i></a>

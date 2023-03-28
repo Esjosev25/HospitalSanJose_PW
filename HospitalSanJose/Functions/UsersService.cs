@@ -1,5 +1,5 @@
 ﻿using HospitalSanJoseModel;
-namespace HospitalSanJoseModel.Functions
+namespace HospitalSanJose.Functions
 {
     public class UsersService : APIServices
     {
@@ -10,6 +10,11 @@ namespace HospitalSanJoseModel.Functions
             return await Get<IEnumerable<User>>($"{ControllerUrl}");
         }
 
+        public async Task<IEnumerable<User>> GetListInactiveUsers(int? Id)
+        {
+            var param = Id != null ? $"?id={Id}" : "";
+            return await Get<IEnumerable<User>>($"{ControllerUrl}/InactiveUsers{param}");
+        }
 
         public async Task<User?> GetById(int? id)
         {

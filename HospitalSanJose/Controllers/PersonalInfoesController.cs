@@ -1,50 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HospitalSanJose.Models;
+using HospitalSanJoseModel;
+using HospitalSanJose.Functions;
 
 namespace HospitalSanJose.Controllers
 {
     public class PersonalInfoesController : Controller
     {
-        private readonly HospitalDbContext _context;
-
-        public PersonalInfoesController(HospitalDbContext context)
+        private readonly PersonalInfosService _personalInfoService;
+        private readonly UsersService _usersService;
+        public PersonalInfoesController( PersonalInfosService personalInfosService, UsersService usersService)
         {
-            _context = context;
+            
+            _personalInfoService = personalInfosService;
+            _usersService = usersService;
         }
 
         // GET: PersonalInfoes
         public async Task<IActionResult> Index()
         {
-            var name = HttpContext.Session.GetString("Username");
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (name == null || userId == null)
-                return Redirect("/auth/login");
-            var hospitalDbContext = _context.PersonalInfos.Include(p => p.User).Where(p => !p.User.Deleted);
-            return View(await hospitalDbContext.ToListAsync());
+            var personalInfos = await _personalInfoService.GetList();
+            return View(personalInfos);
         }
 
         // GET: PersonalInfoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            var name = HttpContext.Session.GetString("Username");
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (name == null || userId == null)
-                return Redirect("/auth/login");
-            if (id == null || _context.PersonalInfos == null)
-            {
-                return NotFound();
-            }
-
-            var personalInfo = await _context.PersonalInfos
-                .Include(p => p.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (personalInfo == null)
+            var personalInfo = await _personalInfoService.GetById(id);
+            if (personalInfo.Id == 0)
             {
                 return NotFound();
             }
@@ -53,69 +37,34 @@ namespace HospitalSanJose.Controllers
         }
 
         // GET: PersonalInfoes/Create
-        public IActionResult Create(int? Id)
+        public async Task<IActionResult> Create(int? Id)
         {
-            var name = HttpContext.Session.GetString("Username");
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (name == null || userId == null)
-                return Redirect("/auth/login");
-            if(Id!= null)
-            {
-                var user = _context.Users.FirstOrDefault(u => u.Id == Id);
-                if (user == null)
-                    return NotFound();
-                var users = new List<User>
-                {
-                    user
-                   
-                };
-                users.AddRange(_context.Users.Where(u => u.Id != Id));
-                ViewData["UserId"] = new SelectList(users, "Id", "Username");
 
-            }
-            else
-            {
-                //mostrar unicamente los usuarios que no tengan informacion asociada
-            ViewData["UserId"] = new SelectList(_context.Users.Where(u=> !u.Activated), "Id", "Username");
-            }
+            var users = await CreatePI(Id);
+            if (users == null)
+                return NotFound();
+            ViewData["UserId"] = new SelectList(users, "Id", "Username");
             return View();
         }
-
+        async Task<List<User>> CreatePI(int? Id)
+        {
+            var users = await _usersService.GetListInactiveUsers(Id);
+            return (List<User>)users;
+        }
         // POST: PersonalInfoes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Dpi,PhoneNumber1,PhoneNumber2,Birthdate,AddressLine1,AddressLine2,MaritalStatus,City")] PersonalInfo personalInfo)
+        public async Task<IActionResult> Create([Bind("Id,UserId,Dpi,PhoneNumber,EmergencyPhoneNumber,Birthdate,AddressLine1,AddressLine2,MaritalStatus,City")] PersonalInfo personalInfo)
         {
 
-            var personalInfoDb = await _context.PersonalInfos.FirstOrDefaultAsync(u => u.UserId == personalInfo.UserId);
-            if (personalInfoDb != null)
+            var  response = await _personalInfoService.Post(personalInfo);
+            if (response != null && response.Response != null)
             {
-                //Usuario ya posee informacion asociada
-                var user = _context.Users.FirstOrDefault(u => u.Id == personalInfo.UserId);
-                if (user == null)
-                    return NotFound();
-                var users = new List<User>
-                {
-                    user
-
-                };
-                users.AddRange(_context.Users.Where(u => u.Id != personalInfo.UserId));
-                ViewData["UserId"] = new SelectList(users, "Id", "Username", personalInfo.UserId);
-                return View(personalInfo);
+                var users = await CreatePI(0);
+                return View(response);
             }
-
-            var userDB = await _context.Users.FirstOrDefaultAsync(u => u.Id == personalInfo.UserId);
-            if (userDB == null)
-            {
-                return NotFound();
-            }
-            personalInfo.User = userDB;
-
-            personalInfo.User.Activated = true;
-            _context.Add(personalInfo);
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
 
@@ -124,17 +73,8 @@ namespace HospitalSanJose.Controllers
         // GET: PersonalInfoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            var name = HttpContext.Session.GetString("Username");
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (name == null || userId == null)
-                return Redirect("/auth/login");
-            if (id == null || _context.PersonalInfos == null)
-            {
-                return NotFound();
-            }
-
-            var personalInfo = await _context.PersonalInfos.Include(u => u.User).FirstOrDefaultAsync(u => u.Id == id);
-            if (personalInfo == null)
+            var personalInfo = await _personalInfoService.GetById(id);
+            if (personalInfo.Id == 0)
             {
                 return NotFound();
             }
@@ -147,52 +87,26 @@ namespace HospitalSanJose.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string Username, [Bind("Id,UserId,Dpi,PhoneNumber1,PhoneNumber2,Birthdate,AddressLine1,AddressLine2,MaritalStatus,City")] PersonalInfo personalInfo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Dpi,PhoneNumber,EmergencyPhoneNumber,Birthdate,AddressLine1,AddressLine2,MaritalStatus,City")] PersonalInfo personalInfo)
         {
-            if (id != personalInfo.Id)
+            if (!ModelState.IsValid)
+                return  View(personalInfo);
+            var response = await _personalInfoService.Put(personalInfo, id);
+            if (response != null)
             {
-                return NotFound();
-            }
+                return View(response);
 
-
-            try
-            {
-                _context.Update(personalInfo);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PersonalInfoExists(personalInfo.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
             }
             return RedirectToAction(nameof(Index));
 
-
-            return View(personalInfo);
         }
 
         // GET: PersonalInfoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            var name = HttpContext.Session.GetString("Username");
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (name == null || userId == null)
-                return Redirect("/auth/login");
-            if (id == null || _context.PersonalInfos == null)
-            {
-                return NotFound();
-            }
 
-            var personalInfo = await _context.PersonalInfos
-                .Include(p => p.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (personalInfo == null)
+            var personalInfo = await _personalInfoService.GetById(id);
+            if (personalInfo.Id == 0)
             {
                 return NotFound();
             }
@@ -205,32 +119,20 @@ namespace HospitalSanJose.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.PersonalInfos == null)
-            {
-                return Problem("Entity set 'HospitalDbContext.PersonalInfos'  is null.");
-            }
-            var personalInfo = await _context.PersonalInfos.FindAsync(id);
-            if (personalInfo != null)
-            {
-                _context.PersonalInfos.Remove(personalInfo);
-            }
-
-            await _context.SaveChangesAsync();
+            await _personalInfoService.Delete(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PersonalInfoExists(int id)
-        {
-            return (_context.PersonalInfos?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
         public async Task<IActionResult> EditByUserID(int id)
         {
-            var personalInfo = await _context.PersonalInfos.Include(u => u.User).FirstOrDefaultAsync(u => u.UserId == id);
-            if (personalInfo != null)
-              return  Redirect($"/PersonalInfoes/Edit/{personalInfo.Id}");
+           
+           var personalInfo = await _personalInfoService.GetByUserId(id);
+            if (personalInfo.Id != 0)
+                return Redirect($"/PersonalInfoes/Edit/{personalInfo.Id}");
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Create));
         }
+
+
     }
 }

@@ -1,12 +1,15 @@
 using HospitalSanJoseAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddDbContext<HospitalDbContext>(options =>
                     options.UseMySQL(connectionString: builder.Configuration.GetConnectionString("HospitalDB")));
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());

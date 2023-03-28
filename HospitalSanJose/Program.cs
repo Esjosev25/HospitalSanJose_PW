@@ -1,6 +1,6 @@
 
+using HospitalSanJose.Functions;
 using HospitalSanJose.Models;
-using HospitalSanJoseModel.Functions;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -25,6 +25,7 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddSingleton<UsersService>();
+builder.Services.AddSingleton<PersonalInfosService>();
 
 
 
