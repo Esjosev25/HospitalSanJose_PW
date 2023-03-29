@@ -16,14 +16,14 @@
                 <label asp-for="UserId" class="control-label"></label>
                 <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
             </div>*@
-            <div class="col-md-6 col-lg-6 col-sm-12">
+         @*   <div class="col-md-6 col-lg-6 col-sm-12">
                 <label asp-for="UserId" class="control-label"></label>
                 <select asp-for="UserId"
                         asp-items="@Model.Users"
                         class="form-control"
                         onchange="UserChanged()"></select>
                 <span asp-validation-for="User" class="text-danger"></span>
-            </div>
+            </div>*@
             <dl class="row">
                 <dt class="col-sm-2">
                     @Html.DisplayNameFor(model => model.User.FirstName)

@@ -38,6 +38,7 @@ namespace HospitalSanJose.Functions
             return JsonConvert.DeserializeObject<T?>(await response.Content.ReadAsStringAsync());
         }
 
+
         protected async Task<T?> Post<T>(T content, string route = "")
         {
             HttpClientHandler clientHandler = new()

@@ -23,10 +23,11 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
+builder.Services.AddSingleton<AuthService>();
 builder.Services.AddSingleton<UsersService>();
 builder.Services.AddSingleton<PersonalInfosService>();
 builder.Services.AddSingleton<RolesService>();
+builder.Services.AddSingleton<UserRolesService>();
 
 
 
@@ -61,7 +62,7 @@ app.Use(async (context, next) =>
     // Do work that can write to the Response.
 
     string[] routes = { "/auth/login", "/auth/register", "/", "/home", "/about" };
-    if (!routes.Contains(context.Request.Path.ToString()))
+    if (!routes.Contains(context.Request.Path.ToString().ToLower()))
     {
         var name = context.Session.GetString("Username");
         var userId = context.Session.GetInt32("UserId");

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HospitalSanJose.Models;
 using AutoMapper;
 using HospitalSanJoseModel;
+using HospitalSanJose.Functions;
 
 namespace HospitalSanJose.Controllers
 {
@@ -16,11 +17,13 @@ namespace HospitalSanJose.Controllers
     {
         private readonly HospitalDbContext _context;
         private readonly IMapper _mapper;
+        private readonly UserRolesService _userRolesService;
 
-        public UserRolesController(HospitalDbContext context, IMapper mapper)
+        public UserRolesController(HospitalDbContext context, IMapper mapper, UserRolesService userRolesService)
         {
             _context = context;
             _mapper = mapper;
+            _userRolesService= userRolesService;
         }
 
         // GET: UserRoles
@@ -28,19 +31,20 @@ namespace HospitalSanJose.Controllers
         {
             //var hospitalDbContext = _context.UserRoles.Include(u => u.Role).Include(u => u.User);
             //_mapper.Map<List<HospitalSanJoseModel.UserRole>>
-            var userRoles = (from ur in _context.UserRoles
-                             join r in _context.Roles on ur.RoleId equals r.Id
-                             join u in _context.Users on ur.UserId equals u.Id
-                             orderby u.FirstName ascending
-                             where !u.Deleted
-                             select new Models.UserRole
-                             {
-                                 UserId = ur.Id,
-                                 RoleId = ur.RoleId,
-                                 User = u,
-                                 Role = r
-                             }
-                              ).ToList();
+            //var userRoles = (from ur in _context.UserRoles
+            //                 join r in _context.Roles on ur.RoleId equals r.Id
+            //                 join u in _context.Users on ur.UserId equals u.Id
+            //                 orderby u.FirstName ascending
+            //                 where !u.Deleted
+            //                 select new Models.UserRole
+            //                 {
+            //                     UserId = ur.Id,
+            //                     RoleId = ur.RoleId,
+            //                     User = u,
+            //                     Role = r
+            //                 }
+            //                  ).ToList();
+            var userRoles = await _userRolesService.GetList();
             return View(userRoles);
         }
 
@@ -148,21 +152,10 @@ namespace HospitalSanJose.Controllers
         }
 
         // POST: UserRoles/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (_context.UserRoles == null)
-            {
-                return Problem("Entity set 'HospitalDbContext.UserRoles'  is null.");
-            }
-            var userRole = await _context.UserRoles.FindAsync(id);
-            if (userRole != null)
-            {
-                _context.UserRoles.Remove(userRole);
-            }
-            
-            await _context.SaveChangesAsync();
+            await _userRolesService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 

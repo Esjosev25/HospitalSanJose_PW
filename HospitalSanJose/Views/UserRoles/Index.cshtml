@@ -12,10 +12,10 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Role)
+                    @Html.DisplayNameFor(model => model.User.Username)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.User)
+                    @Html.DisplayNameFor(model => model.Role.Name)
                 </th>
                 <th>Acciones</th>
             </tr>
@@ -25,16 +25,37 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Role.Id)
+                        @item.User.FirstName @item.User.LastName (@item.User.Username)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.User.Id)
+                        @Html.DisplayFor(modelItem => item.Role.Name)
                     </td>
                     <td>
-                        <a asp-action="Delete" asp-route-id="@item.Id">Desasignar</a>
+                        <a role="button" class="link-danger" onclick="desasignarRol(@item.Id,'@item.Role.Name', '@item.User.Username')">Desasignar</a>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="~/js/sweetAlert.js"></script>
+
+@section Scripts{
+    <script>
+        function desasignarRol(id, rolName, username) {
+            console.log("venimos");
+            showAlert('Confirmar', `¿Deseas desasignar el rol ${rolName} a ${username}?`, 'warning', true, 'Sí').then(confirmed => {
+                if (confirmed) {
+                    console.log(id)
+                    const URL = `/UserRoles/Delete/${id}`;
+                    $.post(URL, function (data) {
+                        console.log('OK',data);
+                        window.location.replace("/UserRoles");
+                    });
+                }
+            });
+        }
+    </script>
+}

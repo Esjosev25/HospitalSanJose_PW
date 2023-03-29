@@ -2,7 +2,7 @@
 
 namespace HospitalSanJoseModel
 {
-    public class UserRole : Response
+    public class UserRole
     {
         public int Id { get; set; }
 
@@ -13,7 +13,8 @@ namespace HospitalSanJoseModel
         public  Role Role { get; set; } = null!;
 
         public  User User { get; set; } = null!;
-        public List<SelectListItem>? Users { get; set; }
-        public List<SelectListItem>? Roles { get; set; }
+        //public List<SelectListItem>? Users { get; set; }
+        //public List<SelectListItem>? Roles { get; set; }
+        public Response? Response { get; set; }
     }
 }
