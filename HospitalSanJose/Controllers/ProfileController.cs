@@ -63,6 +63,7 @@ namespace HospitalSanJose.Controllers
             {
                 personalInfo.User.FirstName = userDB.FirstName;
                 personalInfo.User.LastName = userDB.LastName;
+                personalInfo.User.Activated = userDB.Activated;
                 personalInfo.User.Email = responseUser.Email;
                 personalInfo.Response = responseUser.Response;
                 return View(personalInfo);
@@ -82,6 +83,7 @@ namespace HospitalSanJose.Controllers
                 personalInfo.User.Email = responseUser.Email;
                 personalInfo.Dpi = responsePI.Dpi;
                 personalInfo.Birthdate = responsePI.Birthdate;
+                personalInfo.User.Activated = userDB.Activated;
                 personalInfo.Response = responsePI.Response;
                 return View(personalInfo);
             }
