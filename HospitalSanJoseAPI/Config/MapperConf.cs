@@ -10,6 +10,7 @@ namespace HospitalSanJose.Config
             CreateMap<HospitalSanJoseModel.User, User>().ReverseMap();
             CreateMap<DTO.User.UserCreate, User>().ReverseMap();
             CreateMap<DTO.User.UserUpdate, User>().ReverseMap();
+            CreateMap<DTO.Auth.Register, User>().ReverseMap();
             #endregion
 
             #region "PersonalInfo Model"

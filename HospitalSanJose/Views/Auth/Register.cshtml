@@ -1,4 +1,4 @@
-﻿@model HospitalSanJose.DTO.Register
+﻿@model HospitalSanJoseModel.DTO.Auth.Register
 @{
     ViewData["Title"] = "Register"; 
     Layout = "~/Views/Auth/_Layout.cshtml";
@@ -80,9 +80,9 @@
                             <label 
                                    class="form-label">Password</label>
                             <input type="password"
-                                   name="password1"
+                                   name="password"
                                    class="form-control"
-                                   id="password1"
+                                   id="password"
                                    required />
                             <div class="invalid-feedback">Por favor ingresa tu password!</div>
                         </div>
@@ -90,9 +90,9 @@
                             <label 
                                    class="form-label">Confirma tu Password</label>
                             <input type="password"
-                                   name="password2"
+                                   name="Confirmpassword"
                                    class="form-control"
-                                   id="password2"
+                                   id="Confirmpassword"
                                    required />
                             <div class="invalid-feedback">Por favor ingresa tu password!</div>
                         </div>
@@ -125,9 +125,11 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="~/js/sweetAlert.js"></script>
 
-@if (Model != null && Model.Response != null && Model.Response.ShowWarning )
+@if (Model!=null &&Model.Response != null && Model.Response.ShowWarning)
 {
     <script>
         showAlert('@Model.Response.AlertTitle', '@Model.Response.AlertMessage', '@Model.Response.AlertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));
+        
+     
     </script>
 }

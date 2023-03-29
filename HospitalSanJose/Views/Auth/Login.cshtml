@@ -1,4 +1,4 @@
-﻿@model HospitalSanJose.DTO.Login
+﻿@model HospitalSanJoseModel.DTO.Auth.Login
 @{
     ViewData["Title"] = "Login"; Layout = "~/Views/Auth/_Layout.cshtml";
 }
@@ -78,16 +78,16 @@
     </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="~/js/sweetAlert.js"></script>
 
-@if (Model != null && Model.Response.ShowWarning )
+@if (Model!= null && Model.Response != null && Model.Response.ShowWarning)
 {
     <script>
+
+        
         showAlert('@Model.Response.AlertTitle', '@Model.Response.AlertMessage', '@Model.Response.AlertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));
     </script>
 }
-
 
 <!-- End #main -->
