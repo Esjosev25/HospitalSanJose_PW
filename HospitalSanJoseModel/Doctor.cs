@@ -13,7 +13,7 @@ namespace HospitalSanJoseModel
         public int UserId { get; set; }
 
         public int DepartmentId { get; set; }
-        public Departament Department { get; set; } = null!;
+        public Department Department { get; set; } = null!;
         public User User { get; set; } = null!;
     }
 }

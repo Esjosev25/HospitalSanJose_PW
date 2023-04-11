@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace HospitalSanJoseModel
 {
-    public class Departament
+    public class Department
     {
         public int Id { get; set; }
-
+        [DisplayName("Departamento")]
         public string DepartmentName { get; set; } = null!;
-
+        [DisplayName("Descripcion")]
         public string Description { get; set; } = null!;
 
         public Response? Response { get; set; }

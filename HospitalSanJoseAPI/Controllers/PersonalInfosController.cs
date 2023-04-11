@@ -31,10 +31,10 @@ namespace HospitalSanJoseAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.PersonalInfo>>> GetPersonalInfos()
         {
-          if (_context.PersonalInfos == null)
-          {
-              return NotFound();
-          }
+            if (_context.PersonalInfos == null)
+            {
+                return NotFound();
+            }
             var personalInfos = _mapper.Map<IEnumerable<HospitalSanJoseModel.PersonalInfo>>(await _context.PersonalInfos.Include(p => p.User).Where(p => !p.User.Deleted).ToListAsync());
             return Ok(personalInfos);
         }
@@ -45,11 +45,11 @@ namespace HospitalSanJoseAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<HospitalSanJoseModel.PersonalInfo>> GetPersonalInfo(int id)
         {
-          if (_context.PersonalInfos == null)
-          {
-              return NotFound();
-          }
-            var personalInfo = _mapper.Map<HospitalSanJoseModel.PersonalInfo>(await _context.PersonalInfos.Include(p => p.User).FirstOrDefaultAsync(pi=>pi.Id==id));
+            if (_context.PersonalInfos == null)
+            {
+                return NotFound();
+            }
+            var personalInfo = _mapper.Map<HospitalSanJoseModel.PersonalInfo>(await _context.PersonalInfos.Include(p => p.User).FirstOrDefaultAsync(pi => pi.Id == id));
 
             if (personalInfo == null)
             {
