@@ -29,6 +29,8 @@ builder.Services.AddSingleton<PersonalInfosService>();
 builder.Services.AddSingleton<RolesService>();
 builder.Services.AddSingleton<UserRolesService>();
 
+builder.Services.AddSingleton<DepartmentsService>();
+
 
 
 var app = builder.Build();

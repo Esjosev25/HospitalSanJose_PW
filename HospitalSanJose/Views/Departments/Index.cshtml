@@ -1,41 +1,50 @@
-﻿@model IEnumerable<HospitalSanJose.Models.Department>
+﻿@model IEnumerable<HospitalSanJoseModel.Department>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="card p-3">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DepartmentName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DepartmentName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
+    <div class="d-flex justify-content-between">
+        <h3>Información Personal de Usuarios</h3>
+        <a class="btn btn-primary d-flex align-self-end" asp-action="Create"> + Agregar Departamento</a>
+
+    </div>
+
+    <hr />
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DepartmentName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DepartmentName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+
                         <a asp-action="Edit" asp-route-id="@item.Id"><i class="btn bi bi-pencil"></i></a> |
                         <a asp-action="Details" asp-route-id="@item.Id"><i class="btn bi bi-card-text"></i></a> |
                         <a asp-action="Delete" asp-route-id="@item.Id"><i class="btn bi bi-trash3"></i></a>
                     </td>
-        </tr>
-}
-    </tbody>
-</table>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

@@ -1,36 +1,41 @@
-﻿@model HospitalSanJose.Models.Department
+﻿@model HospitalSanJoseModel.Department
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Departamentos";
 }
 
-<h1>Create</h1>
+<div class="card p-3">
+    <div class="d-flex justify-content-between">
+        <h3>Crear Departamento</h3>
+        <a class="align-self-end" role="button" onclick="window.history.back()">Regresar </a>
+    </div>
 
-<h4>Department</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="DepartmentName" class="control-label"></label>
+    <hr />
+
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <div class="row mb-3">
+            <label asp-for="DepartmentName" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
                 <input asp-for="DepartmentName" class="form-control" />
                 <span asp-validation-for="DepartmentName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
+
+        </div>
+        <div class="row mb-3">
+            <label asp-for="Description" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Crear" class="btn btn-primary" />
+        </div>
+    </form>
+
 </div>
 
 @section Scripts {

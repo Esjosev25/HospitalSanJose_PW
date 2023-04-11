@@ -6,37 +6,32 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HospitalSanJose.Models;
+using HospitalSanJose.Functions;
 
 namespace HospitalSanJose.Controllers
 {
     public class DepartmentsController : Controller
     {
         private readonly HospitalDbContext _context;
-
-        public DepartmentsController(HospitalDbContext context)
+        private readonly DepartmentsService _departmentsService;
+        public DepartmentsController(HospitalDbContext context, DepartmentsService deparmentsService)
         {
             _context = context;
+            _departmentsService = deparmentsService;
         }
 
         // GET: Departments
         public async Task<IActionResult> Index()
         {
-              return _context.Departments != null ? 
-                          View(await _context.Departments.ToListAsync()) :
-                          Problem("Entity set 'HospitalDbContext.Departments'  is null.");
+            var departments = await _departmentsService.GetList();
+            return View(departments);
         }
 
         // GET: Departments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Departments == null)
-            {
-                return NotFound();
-            }
-
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (department == null)
+            var department = await _departmentsService.GetById(id);
+            if (department.Id == 0)
             {
                 return NotFound();
             }
@@ -55,30 +50,25 @@ namespace HospitalSanJose.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DepartmentName,Description")] Department department)
+        public async Task<IActionResult> Create([Bind("DepartmentName,Description")] HospitalSanJoseModel.Department department)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(department);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            var response = await _departmentsService.Post(department);
+            if (response != null && response.Response != null)
+            { 
+                return View(response);
             }
-            return View(department);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Departments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Departments == null)
+            var department = await _departmentsService.GetById(id);
+            if (department.Id == 0)
             {
                 return NotFound();
             }
 
-            var department = await _context.Departments.FindAsync(id);
-            if (department == null)
-            {
-                return NotFound();
-            }
             return View(department);
         }
 
@@ -87,47 +77,24 @@ namespace HospitalSanJose.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DepartmentName,Description")] Department department)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DepartmentName,Description")] HospitalSanJoseModel.Department department)
         {
-            if (id != department.Id)
+            if (!ModelState.IsValid)
+                return View(department);
+            var response = await _departmentsService.Put(department, id);
+            if (response != null)
             {
-                return NotFound();
-            }
+                return View(response);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(department);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DepartmentExists(department.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            return View(department);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Departments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Departments == null)
-            {
-                return NotFound();
-            }
-
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (department == null)
+            var department = await _departmentsService.GetById(id);
+            if (department.Id == 0)
             {
                 return NotFound();
             }
@@ -140,23 +107,10 @@ namespace HospitalSanJose.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Departments == null)
-            {
-                return Problem("Entity set 'HospitalDbContext.Departments'  is null.");
-            }
-            var department = await _context.Departments.FindAsync(id);
-            if (department != null)
-            {
-                _context.Departments.Remove(department);
-            }
-            
-            await _context.SaveChangesAsync();
+            await _departmentsService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DepartmentExists(int id)
-        {
-          return (_context.Departments?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+      
     }
 }
