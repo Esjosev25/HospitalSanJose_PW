@@ -1,65 +1,75 @@
-﻿@model HospitalSanJoseModel.UserRole
+﻿@model HospitalSanJoseModel.DTO.UserRoles.UserRolesCreate
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
 
-<h4>UserRole</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @*<div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
-            </div>*@
-         @*   <div class="col-md-6 col-lg-6 col-sm-12">
-                <label asp-for="UserId" class="control-label"></label>
+<div class="card p-3">
+    <div class="d-flex justify-content-between">
+        <h3>Asignar Rol a Usuarios</h3>
+        <a class="align-self-end" role="button" onclick="window.history.back()">Regresar </a>
+    </div>
+
+    <hr />
+
+
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row mb-3">
+            <label asp-for="User.Username" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+
                 <select asp-for="UserId"
                         asp-items="@Model.Users"
                         class="form-control"
                         onchange="UserChanged()"></select>
                 <span asp-validation-for="User" class="text-danger"></span>
-            </div>*@
-            <dl class="row">
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.User.FirstName)
-                </dt>
-                <dd class="col-sm-10">
-                    <input asp-for="User.FirstName" class="form-control" readonly />
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.User.LastName)
-                </dt>
-                <dd class="col-sm-10">
-                    <input asp-for="User.LastName" class="form-control" readonly />
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.User.Username)
-                </dt>
-                <dd class="col-sm-10">
-                    <input asp-for="User.Username" class="form-control" readonly />
-                </dd>
-            </dl>
-            <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <select asp-for="RoleId" class ="form-control" asp-items="ViewBag.RoleId"></select>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+        <div class="row mb-3">
+            <label asp-for="User.FirstName" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="User.FirstName" class="form-control" disabled />
+
             </div>
-        </form>
-    </div>
+
+        </div>
+        <div class="row mb-3">
+            <label asp-for="User.LastName" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="User.LastName" class="form-control" disabled />
+
+            </div>
+
+        </div>
+        <div class="row mb-3">
+            <label asp-for="User.Email" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="User.Email" class="form-control" disabled />
+
+            </div>
+
+        </div>
+
+        <div class="row mb-3">
+            <label asp-for="RoleId" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+
+                <select asp-for="RoleId" class="form-control" asp-items="@Model.Roles"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </form>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     <script src="~/js/UserRolesCreate.js"></script>
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

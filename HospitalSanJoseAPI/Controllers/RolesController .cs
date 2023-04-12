@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,6 +37,24 @@ namespace HospitalSanJoseAPI.Controllers
           }
             var personalInfos = _mapper.Map<IEnumerable<HospitalSanJoseModel.Role>>(await _context.Roles.ToListAsync());
             return Ok(personalInfos);
+        }
+
+        // GET: api/Roles/AvailableRolesForUser
+        [HttpGet("AvailableRolesForUser/{userId}")]
+        
+        public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.Role>>> AvailableRolesForUser(int? userId)
+        {
+            if (_context.Roles == null)
+            {
+                return NotFound();
+            }
+            var userRoles = await (from ur in _context.UserRoles
+                             join r in _context.Roles on ur.RoleId equals r.Id
+                             
+                             where ur.UserId == userId
+                             select r.Id).ToListAsync();
+            var userRolesAvailable = _mapper.Map<IEnumerable<HospitalSanJoseModel.Role>>(await _context.Roles.Where(r=> !userRoles.Contains(r.Id)).ToListAsync());
+            return Ok(userRolesAvailable);
         }
 
 

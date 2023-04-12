@@ -136,5 +136,15 @@ namespace HospitalSanJose.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        public async Task<JsonResult> GetUserJson()
+        {
+
+            int userId = Convert.ToInt32(HttpContext.Request.Form["userId"].FirstOrDefault().ToString());
+            var user = await _userService.GetById(userId);
+            var jsonresult = new { user };
+            return Json(jsonresult);
+        }
+
     }
 }

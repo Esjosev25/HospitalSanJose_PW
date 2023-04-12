@@ -14,9 +14,11 @@ namespace HospitalSanJose.Controllers
     {
 
         private readonly RolesService _rolesService;
-        public RolesController(RolesService rolesService)
+        private readonly UsersService _usersService;
+        public RolesController(RolesService rolesService, UsersService usersService)
         {
-            _rolesService = rolesService; 
+            _rolesService = rolesService;
+            _usersService = usersService;
         }
 
         // GET: Roles
@@ -27,6 +29,15 @@ namespace HospitalSanJose.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<JsonResult> GetAvailableRolesForUserJson()
+        {
+
+            int userId = Convert.ToInt32(HttpContext.Request.Form["userId"].FirstOrDefault().ToString());
+            var roles = await _rolesService.GetAvailableRolesForUser(userId);
+            
+            return Json(roles);
+        }
 
 
 

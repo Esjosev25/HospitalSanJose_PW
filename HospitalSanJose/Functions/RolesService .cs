@@ -12,18 +12,20 @@ namespace HospitalSanJose.Functions
             return await Get<IEnumerable<Role>>($"{ControllerUrl}");
         }
 
+        public async Task<IEnumerable<Role>?> GetAvailableRolesForUser(int? userId)
+        {
+
+            return await Get<IEnumerable<Role>>($"{ControllerUrl}/AvailableRolesForUser/{userId}");
+
+        }
+
         public async Task<Role?> GetById(int? id)
         {
 
             return await Get<Role?>($"{ControllerUrl}/{id}");
 
         }
-        //public async Task<User?> GetByUserId(int? id)
-        //{
+       
 
-        //    return await Get<User?>($"{ControllerUrl}/{id}");
-
-        //}
-      
     }
 }

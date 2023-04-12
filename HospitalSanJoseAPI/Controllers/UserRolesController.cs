@@ -41,10 +41,6 @@ namespace HospitalSanJoseAPI.Controllers
             return Ok(userRoles);
         }
 
-
-
-
-
         // GET: api/UserRoles/ByUser
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Route("ByUser/{userId}")]

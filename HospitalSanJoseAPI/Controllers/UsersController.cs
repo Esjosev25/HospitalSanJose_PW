@@ -59,6 +59,25 @@ namespace HospitalSanJoseAPI.Controllers
             return Ok(usersList);
         }
 
+        // GET: api/Users/InactiveUsers
+        [HttpGet("UsersWithRemainingRoles")]
+        public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.User>>> UsersWithRemainingRoles()
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+
+            var users = _mapper.Map<IEnumerable<HospitalSanJoseModel.User>>(await (from user in _context.Users
+                                                                                   join userRole in _context.UserRoles
+                                                                                   on user.Id equals userRole.UserId into userRoles
+                                                                                   from role in userRoles.DefaultIfEmpty()
+                                                                                   group role by user into userGroup
+                                                                                   where !userGroup.All(r => r != null && r.RoleId != null) && userGroup.Key.Deleted == false
+                                                                                   select userGroup.Key).ToListAsync());
+            return Ok(users);
+        }
+
 
         // GET: api/Users/5
         [HttpGet("{id}")]
