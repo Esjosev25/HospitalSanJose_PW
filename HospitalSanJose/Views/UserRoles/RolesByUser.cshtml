@@ -1,39 +1,71 @@
-﻿@model IEnumerable<HospitalSanJose.Models.UserRole>
+﻿@model IEnumerable<HospitalSanJoseModel.UserRole>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Roles By User";
 }
 
-<h1>Index</h1>
+<div class="card p-3">
+    <div class="d-flex justify-content-between">
+        <h3>Roles del Usuario</h3>
+        <a class="align-self-end" href="@Url.Action("Index","Users")">Regresar </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Role)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role.Id)
-            </td>
-            <td>
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    <hr />
+    @if (Model.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.User.Username)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Role.Name)
+                    </th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.User.FirstName @item.User.LastName (@item.User.Username)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Role.Name)
+                        </td>
+                        <td>
+                            <a role="button" class="link-danger" onclick="desasignarRol(@item.Id,'@item.Role.Name', '@item.User.Username','@item.User.Id')">Desasignar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="lead text-center">Este usuario no posee ningun rol asociado</p>
+        <a class="text-center" asp-action="Create"> Asignar Rol a Usuario</a>
+    }
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="~/js/sweetAlert.js"></script>
+
+@section Scripts{
+    <script>
+        function desasignarRol(id, rolName, username,userId) {
+            showAlert('Confirmar', `¿Deseas desasignar el rol ${rolName} a ${username}?`, 'warning', true, 'Sí').then(confirmed => {
+                if (confirmed) {
+                    console.log(id)
+                    const URL = `/UserRoles/Delete/${id}`;
+                    $.post(URL, function (data) {
+
+                        window.location.replace(`/UserRoles/RolesByUser/${userId}`);
+                    });
+                }
+            });
+        }
+    </script>
 }
-    </tbody>
-</table>

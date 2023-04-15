@@ -43,7 +43,7 @@ namespace HospitalSanJoseAPI.Controllers
 
         // GET: api/UserRoles/ByUser
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Route("ByUser/{userId}")]
+        [Route("Session/ByUser/{userId}")]
         [HttpGet]
         public ActionResult<UserRolesSession> GetUserRoleById(int userId)
         {
@@ -65,6 +65,50 @@ namespace HospitalSanJoseAPI.Controllers
             };
 
             return Ok(userRolesSession);
+        }
+        [Route("ByUser/{userId}")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.UserRole>>> GetUserRolesById(int userId)
+        {
+            if (_context.UserRoles == null)
+            {
+                return Problem("Entity set 'HospitalDbContext.UserRoles'  is null.");
+            }
+            var userRoles = _mapper.Map<IEnumerable<HospitalSanJoseModel.UserRole>>(await _context.UserRoles
+                                                                                                            .Include(u => u.User)
+                                                                                                            .Include(r => r.Role)
+                                                                                                            .Where(ur => ur.User.Id == userId)
+                                                                                                            .OrderBy(ur => ur.UserId)
+                                                                                                            .ToListAsync());
+
+
+            return Ok(userRoles);
+        }
+
+        // POST: api/UserRole
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<DTO.UserRolesCreate>> PostUserRole(HospitalSanJoseModel.UserRole userRole)
+        {
+            if (_context.UserRoles == null)
+            {
+                return Problem("Entity set 'HospitalDbContext.Departments'  is null.");
+            }
+            var userRoleDB = await _context.UserRoles.FirstOrDefaultAsync(ur=>ur.RoleId == userRole.RoleId && ur.UserId == userRole.UserId);
+            var response = new HospitalSanJoseModel.Response();
+            if (userRoleDB != null)
+            {
+                response.AlertMessage = "El usuario ya tiene asignado dicho rol";
+                response.AlertIcon = "Error";
+                userRole.Response = response;
+                return BadRequest(userRole);
+            }
+
+            var newuserRole = _mapper.Map<UserRole>(userRole);
+            _context.UserRoles.Add(newuserRole);
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<UserRolesCreate>(newuserRole));
         }
 
         // DELETE: api/UserRoles/5

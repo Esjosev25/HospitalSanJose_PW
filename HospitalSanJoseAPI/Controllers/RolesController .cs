@@ -50,7 +50,7 @@ namespace HospitalSanJoseAPI.Controllers
             }
             var userRoles = await (from ur in _context.UserRoles
                              join r in _context.Roles on ur.RoleId equals r.Id
-                             
+                             orderby r.Name ascending
                              where ur.UserId == userId
                              select r.Id).ToListAsync();
             var userRolesAvailable = _mapper.Map<IEnumerable<HospitalSanJoseModel.Role>>(await _context.Roles.Where(r=> !userRoles.Contains(r.Id)).ToListAsync());

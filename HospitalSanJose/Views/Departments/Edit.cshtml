@@ -33,13 +33,16 @@
 
         </div>
         <div class="form-group">
-            <input type="submit" value="Save" class="btn btn-primary" />
+            <input type="submit" value="Guardar cambios" class="btn btn-primary" />
         </div>
     </form>
 
 </div>
 
-@if (Model.Response != null && Model.Response.ShowWarning)
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="~/js/sweetAlert.js"></script>
+
+@if (Model != null && Model.Response != null && Model.Response.ShowWarning)
 {
     <script>
         showAlert('@Model.Response.AlertTitle', '@Model.Response.AlertMessage', '@Model.Response.AlertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));

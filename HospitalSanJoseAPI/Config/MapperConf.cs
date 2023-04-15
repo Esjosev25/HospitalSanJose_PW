@@ -25,6 +25,7 @@ namespace HospitalSanJose.Config
 
             #region "UserRole Model"
             CreateMap<HospitalSanJoseModel.UserRole, UserRole>().ReverseMap();
+            CreateMap<DTO.UserRoles.UserRolesCreate, UserRole>().ReverseMap();
             #endregion
 
             #region "Department"

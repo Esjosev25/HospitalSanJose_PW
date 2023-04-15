@@ -35,7 +35,7 @@ namespace HospitalSanJoseAPI.Controllers
             return Ok(departments);
         }
 
-        //// GET: api/Departments/5
+        // GET: api/Departments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<HospitalSanJoseModel.Department>> GetDepartment(int id)
         {
@@ -66,6 +66,15 @@ namespace HospitalSanJoseAPI.Controllers
                 department.Response = response;
                 return BadRequest(department);
             }
+            var departmentDb = await _context.Departments.FirstOrDefaultAsync(r => r.DepartmentName.Equals(department.DepartmentName));
+           
+            if (departmentDb != null)
+            {
+                response.AlertMessage = "Ya existe un departamento con ese nombre";
+                response.AlertIcon = "warning";
+                department.Response = response;
+                return BadRequest(department);
+            }
             var updatedDepartment = _mapper.Map<Department>(department);
             _context.Entry(updatedDepartment).State = EntityState.Modified;
 
@@ -85,6 +94,16 @@ namespace HospitalSanJoseAPI.Controllers
             {
                 return Problem("Entity set 'HospitalDbContext.Departments'  is null.");
             }
+            var departmentDb = await _context.Departments.FirstOrDefaultAsync(r => r.DepartmentName.Equals(department.DepartmentName));
+            var response = new HospitalSanJoseModel.Response();
+            if (departmentDb!= null)
+            {
+                response.AlertMessage = "Ya existe un departamento con ese nombre";
+                response.AlertIcon = "warning";
+                department.Response = response;
+                return BadRequest(department);
+            }
+
             var newDepartment = _mapper.Map<Department>(department);
             _context.Departments.Add(newDepartment);
             await _context.SaveChangesAsync();

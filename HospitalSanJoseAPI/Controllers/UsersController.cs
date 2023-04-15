@@ -73,7 +73,7 @@ namespace HospitalSanJoseAPI.Controllers
                                                                                    on user.Id equals userRole.UserId into userRoles
                                                                                    from role in userRoles.DefaultIfEmpty()
                                                                                    group role by user into userGroup
-                                                                                   where !userGroup.All(r => r != null && r.RoleId != null) && userGroup.Key.Deleted == false
+                                                                                   where userGroup.Count() < 4 && userGroup.Key.Deleted == false
                                                                                    select userGroup.Key).ToListAsync());
             return Ok(users);
         }

@@ -8,5 +8,6 @@ namespace HospitalSanJoseModel.DTO.Department
         public string DepartmentName { get; set; } = null!;
         
         public string Description { get; set; } = null!;
+        public Response? Response { get; set; }
     }
 }

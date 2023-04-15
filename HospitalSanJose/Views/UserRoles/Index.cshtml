@@ -45,7 +45,6 @@
 @section Scripts{
     <script>
         function desasignarRol(id, rolName, username) {
-            console.log("venimos");
             showAlert('Confirmar', `¿Deseas desasignar el rol ${rolName} a ${username}?`, 'warning', true, 'Sí').then(confirmed => {
                 if (confirmed) {
                     console.log(id)
