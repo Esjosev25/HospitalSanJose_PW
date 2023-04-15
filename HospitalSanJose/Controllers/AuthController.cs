@@ -11,15 +11,11 @@ namespace HospitalSanJose.Controllers
   public class AuthController : Controller
     {
 
-        private readonly HospitalDbContext _context;
-        private readonly ILogger<AuthController> _logger;
         private readonly UserRolesService _userRolesService;
         private readonly AuthService _authRolesService;
-        public AuthController( ILogger<AuthController> logger, AuthService authRolesService, UserRolesService userRolesService)
+        public AuthController( AuthService authRolesService, UserRolesService userRolesService)
         {
 
-    
-            _logger = logger;
             _authRolesService = authRolesService;
              _userRolesService = userRolesService;
         }
@@ -34,7 +30,7 @@ namespace HospitalSanJose.Controllers
         {
             return View("Register");
         }
-        [Route("dashboard")]
+        [Route("dashboard")] 
         public async Task<IActionResult> Dashboard()
         {
 
@@ -78,8 +74,6 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Register(Register register)
         {
             var response = await _authRolesService.Register(register);
-            if (response == null)
-                return View(response);
             if (response.Response != null && response.Response.ShowWarning)
                 return View(response);
             HttpContext.Response.Cookies.Append("loggedIn", "true");

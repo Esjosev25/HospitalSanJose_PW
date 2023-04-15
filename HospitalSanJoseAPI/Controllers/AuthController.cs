@@ -27,16 +27,16 @@ namespace HospitalSanJoseAPI.Controllers
         {
             var response = new HospitalSanJoseModel.Response();
             login.Response = response;
-           
+
             var user = _context.Users.FirstOrDefault(u => u.Username == login.Username);
             // Look up the user in the database
-                login.Response.AlertIcon = "error";
-                login.Response.AlertMessage = "Error en iniciar sesion";
+            login.Response.AlertIcon = "error";
+            login.Response.AlertMessage = "Error en iniciar sesion";
             if (user == null || user.Deleted)
             {
 
 
-                return BadRequest(login);   
+                return BadRequest(login);
             }
 
             if (user.IsLocked)
@@ -48,12 +48,12 @@ namespace HospitalSanJoseAPI.Controllers
 
             if (BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
             {
-                
+
                 //login.Response.ShowWarning = false;
                 login.Response = null;
                 _logger.LogInformation($"El usuario {user.Username} inició sesión");
 
-            
+
                 login.UserId = user.Id;
                 return Ok(login);
             }
@@ -68,26 +68,26 @@ namespace HospitalSanJoseAPI.Controllers
         public async Task<IActionResult> Register(Register register)
         {
 
-             if (_context.Users == null)
+            if (_context.Users == null)
             {
                 return Problem("Entity set 'HospitalDbContext.Users'  is null.");
             }
             var userDB = _context.Users.FirstOrDefault(u => u.Username == register.Username || u.Email == register.Email);
             var response = new HospitalSanJoseModel.Response();
-            register.Response = response;
             if (userDB != null)
             {
 
                 response.AlertMessage = "Correo o Usuario ya existen, intenta con uno nuevo";
                 response.AlertIcon = "error";
+                register.Response = response;
 
                 return BadRequest(register);
             }
-            if(register.Password != register.ConfirmPassword)
+            if (register.Password != register.ConfirmPassword)
             {
                 response.AlertMessage = "Asegúrate de que tus contraseñas coincidan";
                 response.AlertIcon = "error";
-
+                register.Response = response;
                 return BadRequest(register);
             }
 
@@ -96,11 +96,24 @@ namespace HospitalSanJoseAPI.Controllers
 
             var newUser = _mapper.Map<User>(register);
             _context.Users.Add(newUser);
-            //TODO: Asignar rol de usuario
             await _context.SaveChangesAsync();
+            // Asignar rol de usuario
+            var pacienteRole = await _context.Roles.Where(r => r.Name == Utils.Roles.RolesType.Paciente.ToString()).FirstOrDefaultAsync();
+            if (pacienteRole != null)
+            {
+
+                var newRole = new UserRole()
+                {
+                    RoleId = pacienteRole.Id,
+                    UserId = newUser.Id,
+                };
+                _context.UserRoles.Add(newRole);
+                await _context.SaveChangesAsync();
+            }
+            register.UserId = newUser.Id;
             _logger.LogInformation($"Se registró el usuario {register.Username} con el correo {register.Email}");
             return Ok(register);
-            
+
 
         }
     }
