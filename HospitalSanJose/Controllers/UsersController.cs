@@ -54,7 +54,7 @@ namespace HospitalSanJose.Controllers
         {
             user.Email = user.Email.Trim();
             user.Username = user.Username.Trim();
-            user.Password = user.Username.Trim();
+            user.Password = user.Password.Trim();
             user.Response = null;
             if (user.Email == null || user.Username == null)
                 return View(user);
