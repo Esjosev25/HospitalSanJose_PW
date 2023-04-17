@@ -263,8 +263,21 @@ namespace HospitalSanJoseAPI.Controllers
 
             var newUser = _mapper.Map<User>(user);
             _context.Users.Add(newUser);
-            //TODO: Asignar rol de usuario
+            
             await _context.SaveChangesAsync();
+            // Asignar rol de usuario
+            var pacienteRole = await _context.Roles.Where(r => r.Name == Utils.Roles.RolesType.Paciente.ToString()).FirstOrDefaultAsync();
+            if (pacienteRole != null)
+            {
+
+                var newRole = new UserRole()
+                {
+                    RoleId = pacienteRole.Id,
+                    UserId = newUser.Id,
+                };
+                _context.UserRoles.Add(newRole);
+                await _context.SaveChangesAsync();
+            }
             _logger.LogInformation($"Se registró el usuario {user.Username} con el correo {user.Email}");
             return CreatedAtAction("GetUser", new { id = newUser.Id }, newUser);
         }
