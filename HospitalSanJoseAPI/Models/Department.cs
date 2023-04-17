@@ -11,5 +11,5 @@ public partial class Department
 
     public string Description { get; set; } = null!;
 
-    public virtual ICollection<Doctor> Doctors { get; } = new List<Doctor>();
+    public virtual ICollection<DoctorDepartment> DoctorDepartments { get; } = new List<DoctorDepartment>();
 }

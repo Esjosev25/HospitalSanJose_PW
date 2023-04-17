@@ -9,15 +9,19 @@ public partial class Doctor
 
     public int UserId { get; set; }
 
-    public int DepartmentId { get; set; }
+    public string Specialty { get; set; } = null!;
+
+    public int YearsOfExperience { get; set; }
+
+    public int Qualification { get; set; }
 
     public virtual ICollection<Appointment> Appointments { get; } = new List<Appointment>();
 
     public virtual ICollection<Consultation> Consultations { get; } = new List<Consultation>();
 
-    public virtual Department Department { get; set; } = null!;
+    public virtual ICollection<DoctorDepartment> DoctorDepartments { get; } = new List<DoctorDepartment>();
 
-    public virtual ICollection<DoctorsInfo> DoctorsInfos { get; } = new List<DoctorsInfo>();
+    public virtual ICollection<MedicalRecord> MedicalRecords { get; } = new List<MedicalRecord>();
 
     public virtual ICollection<Prescription> Prescriptions { get; } = new List<Prescription>();
 

@@ -31,8 +31,6 @@ public partial class User
 
     public virtual ICollection<Doctor> Doctors { get; } = new List<Doctor>();
 
-    public virtual ICollection<MedicalRecord> MedicalRecords { get; } = new List<MedicalRecord>();
-
     public virtual ICollection<PersonalInfo> PersonalInfos { get; } = new List<PersonalInfo>();
 
     public virtual ICollection<Prescription> Prescriptions { get; } = new List<Prescription>();

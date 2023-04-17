@@ -7,7 +7,7 @@ public partial class MedicalRecord
 {
     public int Id { get; set; }
 
-    public int UserId { get; set; }
+    public int DoctorId { get; set; }
 
     public DateTime RecordDate { get; set; }
 
@@ -17,5 +17,5 @@ public partial class MedicalRecord
 
     public virtual ICollection<Consultation> Consultations { get; } = new List<Consultation>();
 
-    public virtual User User { get; set; } = null!;
+    public virtual Doctor Doctor { get; set; } = null!;
 }
