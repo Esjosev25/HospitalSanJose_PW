@@ -1,14 +1,11 @@
 ﻿
 using HospitalSanJoseModel.DTO.Auth;
 using HospitalSanJose.Functions;
-using HospitalSanJose.Models;
-using HospitalSanJoseModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Elfie.Extensions;
 
 namespace HospitalSanJose.Controllers
 {
-  public class AuthController : Controller
+    public class AuthController : Controller
     {
 
         private readonly UserRolesService _userRolesService;

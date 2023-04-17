@@ -1,6 +1,5 @@
 
 using HospitalSanJose.Functions;
-using HospitalSanJose.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -8,8 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<HospitalDbContext>(options =>
-                    options.UseMySQL(connectionString: builder.Configuration.GetConnectionString("HospitalDB")));
 
 builder.Services.AddDistributedMemoryCache();
 

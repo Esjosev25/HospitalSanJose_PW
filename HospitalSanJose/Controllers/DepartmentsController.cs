@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using HospitalSanJose.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using HospitalSanJose.Functions;
 
 namespace HospitalSanJose.Controllers
 {
     public class DepartmentsController : Controller
     {
-        private readonly HospitalDbContext _context;
+        
         private readonly DepartmentsService _departmentsService;
-        public DepartmentsController(HospitalDbContext context, DepartmentsService deparmentsService)
+        public DepartmentsController(DepartmentsService deparmentsService)
         {
-            _context = context;
             _departmentsService = deparmentsService;
         }
 
