@@ -2,24 +2,25 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using HospitalSanJose.Functions;
 
 namespace HospitalSanJose.Controllers
 {
     public class DoctorsController : Controller
     {
-        private readonly IMapper _mapper;
-        public DoctorsController(IMapper mapper)
+        private readonly DoctorsService _doctorsService;
+        public DoctorsController(DoctorsService doctorsService)
         {
-            
-            _mapper = mapper;
+             _doctorsService = doctorsService;
+         
         }
 
-        //// GET: Doctors
-        //public async Task<IActionResult> Index()
-        //{
-        //    var hospitalDbContext = _context.Doctors.Include(d => d.Department).Include(d => d.User);
-        //    return View(await hospitalDbContext.ToListAsync());
-        //}
+        // GET: Doctors
+        public async Task<IActionResult> Index()
+        {
+            var doctors = await _doctorsService.GetList();
+            return View(doctors);
+        }
 
         //// GET: Doctors/Details/5
         //public async Task<IActionResult> Details(int? id)
@@ -157,7 +158,7 @@ namespace HospitalSanJose.Controllers
         //    {
         //        _context.Doctors.Remove(doctor);
         //    }
-            
+
         //    await _context.SaveChangesAsync();
         //    return RedirectToAction(nameof(Index));
         //}

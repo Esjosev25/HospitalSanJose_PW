@@ -1,5 +1,4 @@
 ﻿using HospitalSanJoseModel;
-using HospitalSanJoseModel.DTO.Department;
 namespace HospitalSanJose.Functions
 {
     public class DepartmentsService : APIServices

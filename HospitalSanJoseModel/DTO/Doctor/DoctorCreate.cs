@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
-namespace HospitalSanJoseModel
+namespace HospitalSanJoseModel.DTO.Doctor
 {
-    public class Doctor
+    public class DoctorCreate
     {
-        public int Id { get; set; }
+      
 
         public int UserId { get; set; }
         public string Specialty { get; set; } = null!;
@@ -16,7 +12,6 @@ namespace HospitalSanJoseModel
         public int YearsOfExperience { get; set; }
 
         public int Qualification { get; set; }
-        public User User { get; set; } = null!;
         public Response? Response { get; set; }
     }
 }
