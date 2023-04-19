@@ -16,6 +16,10 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Index()
         {
             var departments = await _departmentsService.GetList();
+            if (departments == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             return View(departments);
         }
 
@@ -23,6 +27,10 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             var department = await _departmentsService.GetById(id);
+            if (department == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             if (department.Id == 0)
             {
                 return NotFound();
@@ -56,6 +64,10 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             var department = await _departmentsService.GetById(id);
+            if (department == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             if (department.Id == 0)
             {
                 return NotFound();
@@ -86,6 +98,10 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             var department = await _departmentsService.GetById(id);
+            if (department == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             if (department.Id == 0)
             {
                 return NotFound();

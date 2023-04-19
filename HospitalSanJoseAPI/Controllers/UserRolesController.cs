@@ -9,11 +9,14 @@ using HospitalSanJoseAPI.Models;
 using DTO = HospitalSanJoseModel.DTO.UserRoles;
 using AutoMapper;
 using HospitalSanJoseModel.DTO.UserRoles;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSanJoseAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserRolesController : ControllerBase
     {
         private readonly HospitalDbContext _context;

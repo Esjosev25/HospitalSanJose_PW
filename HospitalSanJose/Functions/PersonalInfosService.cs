@@ -4,6 +4,7 @@ namespace HospitalSanJose.Functions
 {
     public class PersonalInfosService : APIServices
     {
+        public PersonalInfosService(IHttpContextAccessor accessor) : base(accessor) { }
         private readonly string ControllerUrl = "api/PersonalInfos";
         public async Task<IEnumerable<PersonalInfo>> GetList()
         {
@@ -26,7 +27,7 @@ namespace HospitalSanJose.Functions
         }
         public async Task<PersonalInfo> Post(PersonalInfo personalInfo)
         {
-            return await Post(personalInfo, $"{ControllerUrl}");
+            return await Post<PersonalInfo>(personalInfo, $"{ControllerUrl}");
         }
 
         public async Task<PersonalInfo> Put(PersonalInfo personalInfo, int id)

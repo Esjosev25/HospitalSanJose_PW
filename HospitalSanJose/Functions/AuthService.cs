@@ -6,16 +6,18 @@ namespace HospitalSanJose.Functions
 {
     public class AuthService : APIServices
     {
+        public AuthService(IHttpContextAccessor accessor) : base(accessor) { }
+
         private readonly string ControllerUrl = "api/Auth";
 
 
-        public async Task<Login> Login(Login login)
+        public async Task<JWTResponse> Login(Login login)
         {
-            return await Post(login, $"{ControllerUrl}/Login");
+            return await Post<JWTResponse>(login, $"{ControllerUrl}/Login");
         }
-        public async Task<Register> Register(Register register)
+        public async Task<JWTResponse> Register(Register register)
         {
-            return await Post(register, $"{ControllerUrl}/Register");
+            return await Post<JWTResponse>(register, $"{ControllerUrl}/Register");
         }
 
       

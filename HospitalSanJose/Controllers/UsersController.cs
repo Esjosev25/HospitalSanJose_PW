@@ -14,11 +14,15 @@ namespace HospitalSanJose.Controllers
         }
 
         // GET: Users
+        
         public async Task<IActionResult> Index()
         {
 
             var users = await _userService.GetList();
-
+            if (users == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             return View(users);
 
 
@@ -29,6 +33,7 @@ namespace HospitalSanJose.Controllers
         {
 
             var user = await _userService.GetById(id);
+         
             if (user.Id == 0)
             {
                 return NotFound();
@@ -74,7 +79,11 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             var user = await _userService.GetById(id);
-            if (user.Id == 0)
+            if (user == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
+            if ( user.Id == 0)
             {
                 return NotFound();
             }
@@ -110,6 +119,10 @@ namespace HospitalSanJose.Controllers
         {
 
             var user = await _userService.GetById(id);
+            if (user == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             if (user.Id == 0)
             {
                 return NotFound();
@@ -142,6 +155,7 @@ namespace HospitalSanJose.Controllers
 
             int userId = Convert.ToInt32(HttpContext.Request.Form["userId"].FirstOrDefault().ToString());
             var user = await _userService.GetById(userId);
+          
             var jsonresult = new { user };
             return Json(jsonresult);
         }

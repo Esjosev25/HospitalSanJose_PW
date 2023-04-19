@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
 using HospitalSanJoseAPI.Models;
+using HospitalSanJoseModel;
 using HospitalSanJoseModel.DTO.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace HospitalSanJoseAPI.Controllers
 {
@@ -13,53 +18,73 @@ namespace HospitalSanJoseAPI.Controllers
     {
         private readonly ILogger<AuthController> _logger;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
         private readonly HospitalDbContext _context;
-        public AuthController(HospitalDbContext context, ILogger<AuthController> logger, IMapper mapper)
+        public AuthController(HospitalDbContext context, ILogger<AuthController> logger, IMapper mapper, IConfiguration configuration)
         {
 
             _context = context;
             _logger = logger;
             _mapper = mapper;
+            _configuration = configuration;
         }
         [Route("Login")]
         [HttpPost]
-        public IActionResult Login(Login login)
+        public async Task<ActionResult<JWTResponse>> Login(Login login)
         {
-            var response = new HospitalSanJoseModel.Response();
-            login.Response = response;
+            var response = new Response();
+            var JWTResponse = new JWTResponse();
+
 
             var user = _context.Users.FirstOrDefault(u => u.Username == login.Username);
             // Look up the user in the database
-            login.Response.AlertIcon = "error";
-            login.Response.AlertMessage = "Error en iniciar sesion";
             if (user == null || user.Deleted)
             {
+            response.AlertIcon = "error";
+            response.AlertMessage = "Error en iniciar sesion";
+                JWTResponse.Response = response;
 
-
-                return BadRequest(login);
+                return BadRequest(JWTResponse);
             }
 
             if (user.IsLocked)
             {
-                login.Response.AlertIcon = "warning";
-                login.Response.AlertMessage = "Usuario bloqueado";
-                return BadRequest(login);
+                response.AlertIcon = "warning";
+                response.AlertMessage = "Usuario bloqueado";
+                JWTResponse.Response = response;
+                return BadRequest(JWTResponse);
             }
 
             if (BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
             {
 
-                //login.Response.ShowWarning = false;
-                login.Response = null;
+
                 _logger.LogInformation($"El usuario {user.Username} inició sesión");
 
 
-                login.UserId = user.Id;
-                return Ok(login);
+                //Get user Roles
+                var userRoles = (from ur in _context.UserRoles
+                                 join r in _context.Roles on ur.RoleId equals r.Id
+                                 orderby r.Name ascending
+                                 where ur.UserId == user.Id
+                                 select r.Name).ToList();
+                var roles = string.Join(",", userRoles);
+
+
+                JWTResponse.UserId = user.Id;
+                JWTResponse.UserName = user.Username;
+                JWTResponse.Roles = roles;
+
+
+
+
+                var Token = CustomTokenJWT(JWTResponse);
+                JWTResponse.Token = Token;
+                return Ok(JWTResponse);
             }
 
 
-            return BadRequest(login);
+            return BadRequest(JWTResponse);
 
         }
 
@@ -94,7 +119,7 @@ namespace HospitalSanJoseAPI.Controllers
             string salt = BCrypt.Net.BCrypt.GenerateSalt();
             register.Password = BCrypt.Net.BCrypt.HashPassword(register.Password, salt);
 
-            var newUser = _mapper.Map<User>(register);
+            var newUser = _mapper.Map<Models.User>(register);
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
             // Asignar rol de usuario
@@ -102,7 +127,7 @@ namespace HospitalSanJoseAPI.Controllers
             if (pacienteRole != null)
             {
 
-                var newRole = new UserRole()
+                var newRole = new Models.UserRole()
                 {
                     RoleId = pacienteRole.Id,
                     UserId = newUser.Id,
@@ -115,6 +140,30 @@ namespace HospitalSanJoseAPI.Controllers
             return Ok(register);
 
 
+        }
+
+
+        private string CustomTokenJWT(JWTResponse Payload)
+        {
+            var _symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]!));
+            var _signingCredentials = new SigningCredentials(_symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+            var _Header = new JwtHeader(_signingCredentials);
+            var _Claims = new[] {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.NameId, Payload.UserName),
+                new Claim("UserId", Payload.UserId.ToString()),
+                new Claim("Username", Payload.UserName),
+                new Claim("Roles", Payload.Roles)
+            };
+            var _Payload = new JwtPayload(
+                    issuer: _configuration["JWT:Issuer"],
+                    audience: _configuration["JWT:Audience"],
+                    claims: _Claims,
+                    notBefore: DateTime.UtcNow,
+                    expires: DateTime.UtcNow.AddDays(1)
+                );
+            var _Token = new JwtSecurityToken(_Header, _Payload);
+            return new JwtSecurityTokenHandler().WriteToken(_Token);
         }
     }
 }

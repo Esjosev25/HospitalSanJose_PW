@@ -29,6 +29,10 @@ namespace HospitalSanJose.Controllers
             ViewBag.ActiveTab = "profile-overview";
 
             var personalInfo = await GetPersonalInfo();
+            if (personalInfo == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             return View(personalInfo);
         }
 
@@ -38,6 +42,10 @@ namespace HospitalSanJose.Controllers
             ViewBag.ActiveTab = "profile-edit";
 
             var personalInfo = await GetPersonalInfo();
+            if (personalInfo == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             return View(personalInfo);
         }
 
@@ -96,6 +104,10 @@ namespace HospitalSanJose.Controllers
             ViewBag.ActiveTab = "profile-change-password";
 
             var personalInfo = _mapper.Map<ProfileChangePassword>(await GetPersonalInfo());
+            if (personalInfo == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             return View(personalInfo);
         }
 

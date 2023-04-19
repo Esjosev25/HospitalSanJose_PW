@@ -30,10 +30,7 @@ namespace HospitalSanJose.Controllers
         [Route("dashboard")] 
         public async Task<IActionResult> Dashboard()
         {
-
-           var response= await SaveRolesInSession();
-            if(!response)
-                return RedirectToAction("Login");
+          
             return View("Dashboard");
         }
 
@@ -54,10 +51,19 @@ namespace HospitalSanJose.Controllers
             if (response == null)
                 return View();
             if(response.Response!=null && response.Response.ShowWarning)
-                return View(response);
+            {
+                login.Response = response.Response;
+                return View(login);
+            }
             HttpContext.Response.Cookies.Append("loggedIn", "true");
             HttpContext.Session.SetString("Username", login.Username);
             HttpContext.Session.SetInt32("UserId", (int)response.UserId!);
+            HttpContext.Session.SetString("Token", response.Token);
+            var roles = response.Roles ?? "";
+            
+            if (roles == "")
+                return RedirectToAction("logout");
+            HttpContext.Session.SetString("Roles", roles);
             return RedirectToAction("Index", "Dashboard");
 
         }

@@ -3,6 +3,7 @@ namespace HospitalSanJose.Functions
 {
     public class DepartmentsService : APIServices
     {
+        public DepartmentsService(IHttpContextAccessor accessor) : base(accessor) { }
         private readonly string ControllerUrl = "api/Departments";
         public async Task<IEnumerable<Department>> GetList()
         {
@@ -25,7 +26,7 @@ namespace HospitalSanJose.Functions
         }
         public async Task<Department> Post(Department department)
         {
-            return await Post(department, $"{ControllerUrl}");
+            return await Post<Department>(department, $"{ControllerUrl}");
         }
 
         public async Task<Department> Put(Department department, int id)

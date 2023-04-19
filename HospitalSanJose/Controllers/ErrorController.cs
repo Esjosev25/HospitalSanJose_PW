@@ -15,10 +15,12 @@ namespace HospitalSanJose.Controllers
         public IActionResult HttpStatusCodeHandler(int statusCode)
         {
             //Request.RouteValues.Last().ToString();
-            switch (statusCode)
+           switch (statusCode)
             {
                 case 404:
                     return View("NotFound");
+                case 401:
+                    return View("Unauthorize");
                 default:
                     return View("Error");
             }

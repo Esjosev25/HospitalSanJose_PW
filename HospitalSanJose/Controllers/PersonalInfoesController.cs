@@ -21,6 +21,10 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Index()
         {
             var personalInfos = await _personalInfoService.GetList();
+            if (personalInfos == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             return View(personalInfos);
         }
 
@@ -28,6 +32,10 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             var personalInfo = await _personalInfoService.GetById(id);
+            if (personalInfo == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             if (personalInfo.Id == 0)
             {
                 return NotFound();
@@ -41,6 +49,7 @@ namespace HospitalSanJose.Controllers
         {
 
             var users = await CreatePI(Id);
+         
             if (users == null)
                 return NotFound();
             ViewData["UserId"] = new SelectList(users, "Id", "Username");
@@ -74,6 +83,10 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             var personalInfo = await _personalInfoService.GetById(id);
+            if (personalInfo == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             if (personalInfo.Id == 0)
             {
                 return NotFound();
@@ -106,6 +119,10 @@ namespace HospitalSanJose.Controllers
         {
 
             var personalInfo = await _personalInfoService.GetById(id);
+            if (personalInfo == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             if (personalInfo.Id == 0)
             {
                 return NotFound();
@@ -127,6 +144,10 @@ namespace HospitalSanJose.Controllers
         {
            
            var personalInfo = await _personalInfoService.GetByUserId(id);
+            if (personalInfo == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             if (personalInfo.Id != 0)
                 return Redirect($"/PersonalInfoes/Edit/{personalInfo.Id}");
 

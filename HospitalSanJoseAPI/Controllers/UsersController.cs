@@ -5,11 +5,14 @@ using DTO = HospitalSanJoseModel.DTO;
 using AutoMapper;
 using System.Linq;
 using HospitalSanJoseModel.DTO.Profile;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace HospitalSanJoseAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UsersController : ControllerBase
     {
         private readonly IMapper _mapper;

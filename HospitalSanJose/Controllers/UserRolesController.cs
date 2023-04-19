@@ -28,12 +28,20 @@ namespace HospitalSanJose.Controllers
         public async Task<IActionResult> Index()
         {
             var userRoles = await _userRolesService.GetList();
+            if (userRoles == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             return View(userRoles);
         }
         // GET: UserRoles
         public async Task<IActionResult> RolesByUser(int? id)
         {
             var userRoles = await _userRolesService.GetUserRolesById((int)id);
+            if (userRoles == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
             return View(userRoles);
         }
 

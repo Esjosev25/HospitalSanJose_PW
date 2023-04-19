@@ -6,6 +6,7 @@ namespace HospitalSanJose.Functions
 {
     public class UserRolesService : APIServices
     {
+        public UserRolesService(IHttpContextAccessor accessor) : base(accessor) { }
         private readonly string ControllerUrl = "api/UserRoles";
         public async Task<IEnumerable<UserRole>> GetList()
         {
@@ -26,7 +27,7 @@ namespace HospitalSanJose.Functions
 
         public async Task<UserRolesCreate> Post(UserRolesCreate userRole)
         {
-            return await Post(userRole, $"{ControllerUrl}");
+            return await Post<UserRolesCreate>(userRole, $"{ControllerUrl}");
         }
 
         public async Task Delete(int? id)

@@ -1,10 +1,10 @@
 ﻿using HospitalSanJoseModel;
-using HospitalSanJoseModel.DTO.Profile;
 
 namespace HospitalSanJose.Functions
 {
     public class RolesService : APIServices
     {
+        public RolesService(IHttpContextAccessor accessor) : base(accessor) { }
         private readonly string ControllerUrl = "api/Roles";
         public async Task<IEnumerable<Role>> GetList()
         {

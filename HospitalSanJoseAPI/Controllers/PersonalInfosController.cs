@@ -8,11 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using HospitalSanJoseAPI.Models;
 using DTO = HospitalSanJoseModel.DTO.PersonalInfo;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSanJoseAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PersonalInfosController : ControllerBase
     {
         private readonly IMapper _mapper;
