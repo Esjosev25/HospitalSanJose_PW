@@ -1,5 +1,4 @@
 ﻿using HospitalSanJoseModel;
-using HospitalSanJoseModel.DTO.Profile;
 using HospitalSanJoseModel.DTO.UserRoles;
 
 namespace HospitalSanJose.Functions

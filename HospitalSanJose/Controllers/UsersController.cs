@@ -33,7 +33,11 @@ namespace HospitalSanJose.Controllers
         {
 
             var user = await _userService.GetById(id);
-         
+            if (user == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
+
             if (user.Id == 0)
             {
                 return NotFound();
