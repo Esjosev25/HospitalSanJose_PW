@@ -83,7 +83,9 @@ namespace HospitalSanJoseAPI.Controllers
                 return Ok(JWTResponse);
             }
 
-
+            response.AlertIcon = "error";
+            response.AlertMessage = "Error en iniciar sesion";
+            JWTResponse.Response = response;
             return BadRequest(JWTResponse);
 
         }
