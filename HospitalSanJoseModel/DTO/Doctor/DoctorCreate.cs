@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel;
 
 namespace HospitalSanJoseModel.DTO.Doctor
 {
@@ -12,6 +13,8 @@ namespace HospitalSanJoseModel.DTO.Doctor
         public int YearsOfExperience { get; set; }
 
         public int Qualification { get; set; }
+        public HospitalSanJoseModel.User User { get; set; } = null!;
+        public List<SelectListItem>? Users { get; set; }
         public Response? Response { get; set; }
     }
 }

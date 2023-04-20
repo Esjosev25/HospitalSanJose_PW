@@ -3,16 +3,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using HospitalSanJose.Functions;
+using HospitalSanJoseModel.DTO.UserRoles;
+using HospitalSanJoseModel.DTO.Doctor;
+using HospitalSanJoseModel;
 
 namespace HospitalSanJose.Controllers
 {
     public class DoctorsController : Controller
     {
         private readonly DoctorsService _doctorsService;
-        public DoctorsController(DoctorsService doctorsService)
+        private readonly DepartmentsService _departmentsService;
+        private readonly UsersService _usersService;
+        public DoctorsController(DoctorsService doctorsService, DepartmentsService departmentsService, UsersService usersService)
         {
-             _doctorsService = doctorsService;
-         
+            _doctorsService = doctorsService;
+            _departmentsService = departmentsService;
+            _usersService = usersService;
+
         }
 
         // GET: Doctors
@@ -26,150 +33,117 @@ namespace HospitalSanJose.Controllers
             return View(doctors);
         }
 
-        //// GET: Doctors/Details/5
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    if (id == null || _context.Doctors == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: Doctors/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
 
-        //    var doctor = await _context.Doctors
-        //        .Include(d => d.Department)
-        //        .Include(d => d.User)
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (doctor == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var doctor = await _doctorsService.GetById(id);
+            if (doctor == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
 
-        //    return View(doctor);
-        //}
+            if (doctor.Id == 0)
+            {
+                return NotFound();
+            }
+            return View(doctor);
+        }
 
-        //// GET: Doctors/Create
-        //public IActionResult Create()
-        //{
-        //    var doc = _mapper.Map<HospitalSanJoseModel.Doctor>(_context.Doctors.FirstOrDefault(d=>d.Id==1));
-        //    ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id");
-        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-        //    return View();
-        //}
+        // GET: Doctors/Create
+        public async Task<IActionResult> Create()
+        {
 
-        //// POST: Doctors/Create
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Id,UserId,DepartmentId")] Doctor doctor)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(doctor);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id", doctor.DepartmentId);
-        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", doctor.UserId);
-        //    return View(doctor);
-        //}
+            var users = await _usersService.GetNonDoctors();
 
-        //// GET: Doctors/Edit/5
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null || _context.Doctors == null)
-        //    {
-        //        return NotFound();
-        //    }
+            DoctorCreate doctor = new()
+            {
 
-        //    var doctor = await _context.Doctors.FindAsync(id);
-        //    if (doctor == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id", doctor.DepartmentId);
-        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", doctor.UserId);
-        //    return View(doctor);
-        //}
+                Users = users.Select(s => new SelectListItem()
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Username
+                }).ToList(),
+                User = users.FirstOrDefault()
+            };
 
-        //// POST: Doctors/Edit/5
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,DepartmentId")] Doctor doctor)
-        //{
-        //    if (id != doctor.Id)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(doctor);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!DoctorExists(doctor.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id", doctor.DepartmentId);
-        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", doctor.UserId);
-        //    return View(doctor);
-        //}
+            return View(doctor);
+        }
 
-        //// GET: Doctors/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null || _context.Doctors == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // POST: Doctors/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,UserId,Specialty,YearsOfExperience,Qualification")] DoctorCreate doctor)
+        {
+            var response = await _doctorsService.Post(doctor);
+            if (response != null && response.Response != null)
+            {
+                return View(response);
+            }
 
-        //    var doctor = await _context.Doctors
-        //        .Include(d => d.Department)
-        //        .Include(d => d.User)
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (doctor == null)
-        //    {
-        //        return NotFound();
-        //    }
+            return RedirectToAction(nameof(Index));
+        }
 
-        //    return View(doctor);
-        //}
+        // GET: Doctors/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            var doctor = await _doctorsService.GetById(id);
+            if (doctor == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
 
-        //// POST: Doctors/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    if (_context.Doctors == null)
-        //    {
-        //        return Problem("Entity set 'HospitalDbContext.Doctors'  is null.");
-        //    }
-        //    var doctor = await _context.Doctors.FindAsync(id);
-        //    if (doctor != null)
-        //    {
-        //        _context.Doctors.Remove(doctor);
-        //    }
+            if (doctor.Id == 0)
+            {
+                return NotFound();
+            }
+            return View(doctor);
+        }
 
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
+        // POST: Doctors/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Specialty,YearsOfExperience,Qualification")] Doctor doctor)
+        {
+            if (!ModelState.IsValid)
+                return View(doctor);
+            var response = await _doctorsService.Put(doctor, id);
+            if (response != null)
+            {
+                return View(response);
 
-        //private bool DoctorExists(int id)
-        //{
-        //  return (_context.Doctors?.Any(e => e.Id == id)).GetValueOrDefault();
-        //}
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Doctors/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            var doctor = await _doctorsService.GetById(id);
+            if (doctor == null)
+            {
+                return RedirectToAction("401", "Error"); // redirect to the error page
+            }
+
+            if (doctor.Id == 0)
+            {
+                return NotFound();
+            }
+            return View(doctor);
+        }
+
+        // POST: Doctors/Delete/5        
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _doctorsService.Delete(id);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

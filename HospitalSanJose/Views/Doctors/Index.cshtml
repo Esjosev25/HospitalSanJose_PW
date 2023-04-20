@@ -1,15 +1,19 @@
 ﻿@model IEnumerable<HospitalSanJoseModel.Doctor>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Doctores";
 }
+<div class="card p-3">
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<div class="d-flex justify-content-between">
+    <h3>Doctores</h3>
+    <a class="btn btn-primary d-flex align-self-end" asp-action="Create"> + Agregar Doctor</a>
+
+</div>
+
+<hr />
+    <table class="table table-striped">
     <thead>
         <tr>
 
@@ -55,3 +59,4 @@
         }
     </tbody>
 </table>
+</div> 

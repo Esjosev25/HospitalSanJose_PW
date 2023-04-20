@@ -18,6 +18,11 @@ namespace HospitalSanJose.Functions
             return await Get<IEnumerable<User>>($"{ControllerUrl}/UsersWithRemainingRoles");
         }
 
+        public async Task<IEnumerable<User>> GetNonDoctors()
+        {
+            return await Get<IEnumerable<User>>($"{ControllerUrl}/NonDoctors");
+        }
+
         public async Task<IEnumerable<User>> GetListInactiveUsers(int? Id)
         {
             var param = Id != null ? $"?id={Id}" : "";

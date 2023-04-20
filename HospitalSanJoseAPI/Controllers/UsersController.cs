@@ -62,7 +62,7 @@ namespace HospitalSanJoseAPI.Controllers
             return Ok(usersList);
         }
 
-        // GET: api/Users/InactiveUsers
+        // GET: api/Users/UsersWithRemainingRoles
         [HttpGet("UsersWithRemainingRoles")]
         public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.User>>> UsersWithRemainingRoles()
         {
@@ -79,6 +79,20 @@ namespace HospitalSanJoseAPI.Controllers
                                                                                    where userGroup.Count() < 4 && userGroup.Key.Deleted == false
                                                                                    select userGroup.Key).ToListAsync());
             return Ok(users);
+        }
+
+        // GET: api/Users/NonDoctors
+        [HttpGet("NonDoctors")]
+        public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.User>>> AllNonDoctorUsers()
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var doctorsIds = _context.Doctors.Select(d => d.UserId).ToList();
+            var nonDoctorUsers = _mapper.Map<IEnumerable<HospitalSanJoseModel.User>>(await _context.Users.Where(u => !doctorsIds.Contains(u.Id) && !u.Deleted).ToListAsync());
+
+            return Ok(nonDoctorUsers);
         }
 
 

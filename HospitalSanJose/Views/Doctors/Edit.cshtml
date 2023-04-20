@@ -4,46 +4,74 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<div class="card p-3">
 
-<h4>Doctor</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-                <span asp-validation-for="UserId" class="text-danger"></span>
+    <div class="d-flex justify-content-between">
+        <h3>Editar Doctor</h3>
+        <a class="align-self-end" role="button" onclick="window.history.back()">Regresar </a>
+    </div>
+
+    <hr />
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="UserId" />
+        <div class="row mb-3">
+            <label asp-for="User.Username" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="User.Username" class="form-control" disabled />
             </div>
-            <div class="form-group">
-                <label asp-for="Specialty" class="control-label"></label>
+        </div>
+        <div class="row mb-3">
+            <label asp-for="User.FirstName" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="User.FirstName" class="form-control" disabled />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label asp-for="User.LastName" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
+                <input asp-for="User.LastName" class="form-control" disabled />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label asp-for="Specialty" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
                 <input asp-for="Specialty" class="form-control" />
                 <span asp-validation-for="Specialty" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="YearsOfExperience" class="control-label"></label>
+        </div>
+        <div class="row mb-3">
+            <label asp-for="YearsOfExperience" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
                 <input asp-for="YearsOfExperience" class="form-control" />
                 <span asp-validation-for="YearsOfExperience" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Qualification" class="control-label"></label>
+        </div>
+        <div class="row mb-3">
+            <label asp-for="Qualification" class="col-md-4 col-lg-3 col-form-label"></label>
+            <div class="col-md-8 col-lg-9">
                 <input asp-for="Qualification" class="form-control" />
                 <span asp-validation-for="Qualification" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Editar Doctor" class="btn btn-primary" />
+        </div>
+    </form>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="~/js/sweetAlert.js"></script>
 
+@if (Model.Response != null && Model.Response.ShowWarning)
+{
+    <script>
+        showAlert('@Model.Response.AlertTitle', '@Model.Response.AlertMessage', '@Model.Response.AlertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));
+    </script>
+}
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

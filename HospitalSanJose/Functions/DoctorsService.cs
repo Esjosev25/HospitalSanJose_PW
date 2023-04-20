@@ -1,5 +1,5 @@
 ﻿using HospitalSanJoseModel;
-
+using HospitalSanJoseModel.DTO.Doctor;
 namespace HospitalSanJose.Functions
 {
     public class DoctorsService : APIServices
@@ -18,7 +18,7 @@ namespace HospitalSanJose.Functions
             return await Get<Doctor?>($"{ControllerUrl}/{id}");
 
         }
-        public async Task<Doctor> Post(Doctor doctor)
+        public async Task<Doctor> Post(DoctorCreate doctor)
         {
             return await Post<Doctor>(doctor, $"{ControllerUrl}");
         }

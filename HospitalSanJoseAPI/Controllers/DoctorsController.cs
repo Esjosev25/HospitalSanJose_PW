@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using HospitalSanJoseAPI.Models;
 using AutoMapper;
-
 using DTO = HospitalSanJoseModel.DTO.Doctor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -43,7 +42,7 @@ namespace HospitalSanJoseAPI.Controllers
             {
                 return NotFound();
             }
-            var doctor = _mapper.Map<HospitalSanJoseModel.Doctor>(await _context.Doctors.FindAsync(id));
+            var doctor = _mapper.Map<HospitalSanJoseModel.Doctor>(await _context.Doctors.Include(u => u.User).Where(u=>u.Id == id).FirstAsync());
 
             if (doctor == null)
             {
@@ -53,36 +52,30 @@ namespace HospitalSanJoseAPI.Controllers
             return Ok(doctor);
         }
 
-        //// PUT: api/Doctors/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutDoctor(int id, HospitalSanJoseModel.Doctor doctor)
-        //{
-        //    if (id != doctor.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+        // PUT: api/Doctors/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutDoctor(int id, HospitalSanJoseModel.Doctor doctor)
+        {
+            var response = new HospitalSanJoseModel.Response();
+            if (id != doctor.Id)
+            {
+                response.AlertMessage = "Parametro por ruta y el id de personalInfo deben de ser igual";
+                response.AlertIcon = "error";
+                return BadRequest(doctor);
+            }
 
-        //    _context.Entry(doctor).State = EntityState.Modified;
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!DoctorExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            var updatedDoctor = _mapper.Map<Doctor>(doctor);
+            _context.Entry(updatedDoctor).State = EntityState.Modified;
+            
 
-        //    return NoContent();
-        //}
+
+            await _context.SaveChangesAsync();
+
+
+            return NoContent();
+        }
 
         // POST: api/Doctors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -153,9 +146,5 @@ namespace HospitalSanJoseAPI.Controllers
             return NoContent();
         }
 
-        //private bool DoctorExists(int id)
-        //{
-        //    return (_context.Doctors?.Any(e => e.Id == id)).GetValueOrDefault();
-        //}
     }
 }
