@@ -1,10 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HospitalSanJoseAPI.Models;
 using AutoMapper;
@@ -34,17 +28,17 @@ namespace HospitalSanJoseAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.Role>>> GetRoles()
         {
-          if (_context.Roles == null)
-          {
-              return NotFound();
-          }
+            if (_context.Roles == null)
+            {
+                return NotFound();
+            }
             var personalInfos = _mapper.Map<IEnumerable<HospitalSanJoseModel.Role>>(await _context.Roles.ToListAsync());
             return Ok(personalInfos);
         }
 
         // GET: api/Roles/AvailableRolesForUser
         [HttpGet("AvailableRolesForUser/{userId}")]
-        
+
         public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.Role>>> AvailableRolesForUser(int? userId)
         {
             if (_context.Roles == null)
@@ -52,11 +46,11 @@ namespace HospitalSanJoseAPI.Controllers
                 return NotFound();
             }
             var userRoles = await (from ur in _context.UserRoles
-                             join r in _context.Roles on ur.RoleId equals r.Id
-                             orderby r.Name ascending
-                             where ur.UserId == userId
-                             select r.Id).ToListAsync();
-            var userRolesAvailable = _mapper.Map<IEnumerable<HospitalSanJoseModel.Role>>(await _context.Roles.Where(r=> !userRoles.Contains(r.Id)).ToListAsync());
+                                   join r in _context.Roles on ur.RoleId equals r.Id
+                                   orderby r.Name ascending
+                                   where ur.UserId == userId
+                                   select r.Id).ToListAsync();
+            var userRolesAvailable = _mapper.Map<IEnumerable<HospitalSanJoseModel.Role>>(await _context.Roles.Where(r => !userRoles.Contains(r.Id)).ToListAsync());
             return Ok(userRolesAvailable);
         }
 
@@ -66,11 +60,11 @@ namespace HospitalSanJoseAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<HospitalSanJoseModel.Role>> GetRole(int id)
         {
-          if (_context.Roles == null)
-          {
-              return NotFound();
-          }
-            var role = _mapper.Map<HospitalSanJoseModel.Role>(await _context.Roles.FirstOrDefaultAsync(r=>r.Id==id));
+            if (_context.Roles == null)
+            {
+                return NotFound();
+            }
+            var role = _mapper.Map<HospitalSanJoseModel.Role>(await _context.Roles.FirstOrDefaultAsync(r => r.Id == id));
 
             if (role == null)
             {
@@ -80,24 +74,5 @@ namespace HospitalSanJoseAPI.Controllers
             return Ok(role);
         }
 
-        // GET: api/Roless/User/5
-        //[HttpGet("User/{id}")]
-        //public async Task<ActionResult<HospitalSanJoseModel.Role>> GetRolesByUser(int id)
-        //{
-        //    if (_context.Roles == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var personalInfo = _mapper.Map<HospitalSanJoseModel.Role>(await _context.Roles.Include(p => p.User).FirstOrDefaultAsync(pi => pi.UserId == id));
-
-        //    if (personalInfo == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(personalInfo);
-        //}
-
-      
     }
 }

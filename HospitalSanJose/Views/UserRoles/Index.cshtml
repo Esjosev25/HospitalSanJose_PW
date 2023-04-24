@@ -50,7 +50,6 @@
                     console.log(id)
                     const URL = `/UserRoles/Delete/${id}`;
                     $.post(URL, function (data) {
-                        console.log('OK',data);
                         window.location.replace("/UserRoles");
                     });
                 }

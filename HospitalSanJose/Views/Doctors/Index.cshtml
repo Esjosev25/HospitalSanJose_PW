@@ -6,57 +6,64 @@
 <div class="card p-3">
 
 
-<div class="d-flex justify-content-between">
-    <h3>Doctores</h3>
-    <a class="btn btn-primary d-flex align-self-end" asp-action="Create"> + Agregar Doctor</a>
+    <div class="d-flex justify-content-between">
+        <h3>Doctores</h3>
+        <a class="btn btn-primary d-flex align-self-end" asp-action="Create"> + Agregar Doctor</a>
 
-</div>
+    </div>
 
-<hr />
+    <hr />
     <table class="table table-striped">
-    <thead>
-        <tr>
-
-            <th>Nombre</th>
-            <th>
-                @Html.DisplayNameFor(model => model.Specialty)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.YearsOfExperience)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Qualification)
-            </th>
-
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+        <thead>
             <tr>
-                <td>
 
-                    @item.User.FirstName @item.User.LastName
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Specialty)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.YearsOfExperience)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Qualification)
-                </td>
-
-                <td>
-                    <a href="@Url.Action("Details","Users", new {id= @item.UserId})"><i class="btn bi bi-file-person"></i></a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="btn bi bi-pencil"></i></a> |
-                    <a asp-action="Details" asp-route-id="@item.Id"><i class="btn bi bi-card-text"></i></a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="btn bi bi-trash3"></i></a>
-                </td>
+                <th>Nombre</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Specialty)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.YearsOfExperience)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Qualification)
+                </th>
+                <th>Departamentos</th>
+                <th>Acciones</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+
+                        @item.User.FirstName @item.User.LastName
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Specialty)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.YearsOfExperience)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Qualification)
+                    </td>
+                    <td>
+
+                        <a href="@Url.Action("DepartmentsByDoctor","DoctorDepartments")/@item.Id" class="btn ">
+                            <i class="bi bi-heart-pulse"></i>
+                        </a>
+
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Details","Users", new {id= @item.UserId})"><i class="btn bi bi-file-person"></i></a> |
+
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="btn bi bi-pencil"></i></a> |
+                        <a asp-action="Details" asp-route-id="@item.Id"><i class="btn bi bi-card-text"></i></a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="btn bi bi-trash3"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div> 

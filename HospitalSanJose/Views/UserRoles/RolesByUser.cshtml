@@ -55,10 +55,9 @@
 
 @section Scripts{
     <script>
-        function desasignarRol(id, rolName, username,userId) {
-            showAlert('Confirmar', `¿Deseas desasignar el rol ${rolName} a ${username}?`, 'warning', true, 'Sí').then(confirmed => {
+        function desasignarRol(id, rolName, username, userId) {
+            showAlert('Confirmar', `¿Deseas desasignar el rol ${rolName} a ${username}?`, 'warning', true, 'Aceptar').then(confirmed => {
                 if (confirmed) {
-                    console.log(id)
                     const URL = `/UserRoles/Delete/${id}`;
                     $.post(URL, function (data) {
 
