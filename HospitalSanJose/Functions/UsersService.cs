@@ -35,6 +35,12 @@ namespace HospitalSanJose.Functions
             return await Get<User?>($"{ControllerUrl}/{id}");
 
         }
+        public async Task<User?> GetByDoctorId(int? id)
+        {
+
+            return await Get<User?>($"{ControllerUrl}/ByDoctorId/{id}");
+
+        }
         public async Task<User> Post(User user)
         {
             return await Post<User>(user, $"{ControllerUrl}");

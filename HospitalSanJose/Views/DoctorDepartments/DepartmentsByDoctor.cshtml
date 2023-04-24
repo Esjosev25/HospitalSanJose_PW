@@ -1,0 +1,71 @@
+﻿@model IEnumerable<HospitalSanJoseModel.DoctorDepartment>
+
+@{
+    ViewData["Title"] = "Departments by User";
+}
+
+<div class="card p-3">
+    <div class="d-flex justify-content-between">
+        <h3>Roles del Usuario</h3>
+        <a class="align-self-end" href="@Url.Action("Index","Doctors")">Regresar </a>
+    </div>
+
+    <hr />
+    @if (Model.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Doctor.User.Username)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Department.DepartmentName)
+                    </th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.Doctor.User.FirstName @item.Doctor.User.LastName (@item.Doctor.User.Username)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Department.DepartmentName)
+                        </td>
+                        <td>
+                            <a role="button" class="link-danger" onclick="desasignarDepartamento(@item.Id,'@item.Department.DepartmentName', '@item.Doctor.User.Username','@item.DoctorId')">Desasignar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="lead text-center">Este doctor no posee ningun departamento asociado</p>
+        <a class="text-center" asp-action="Create"> Asignar Departamento a Doctor</a>
+    }
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="~/js/sweetAlert.js"></script>
+
+@section Scripts{
+    <script>
+        function desasignarDepartamento(id, depName, doctorName, doctorId) {
+            showAlert('Confirmar', `¿Deseas desasignar el departamento ${depName} a ${doctorName}?`, 'warning', true, 'Aceptar').then(confirmed => {
+                if (confirmed) {
+                    console.log(id)
+                    const URL = `/DoctorDepartments/Delete/${id}`;
+                    $.post(URL, function (data) {
+
+                        window.location.replace(`/DoctorDepartments/DepartmentsByDoctor/${doctorId}`);
+                    });
+                }
+            });
+        }
+    </script>
+}

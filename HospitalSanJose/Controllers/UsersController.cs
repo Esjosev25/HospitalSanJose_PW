@@ -163,6 +163,15 @@ namespace HospitalSanJose.Controllers
             var jsonresult = new { user };
             return Json(jsonresult);
         }
+        [HttpPost]
+        public async Task<JsonResult> GetUserByDoctorIdJson()
+        {
 
+            int doctorId = Convert.ToInt32(HttpContext.Request.Form["doctorId"].FirstOrDefault().ToString());
+            var user = await _userService.GetByDoctorId(doctorId);
+
+            var jsonresult = new { user };
+            return Json(jsonresult);
+        }
     }
 }

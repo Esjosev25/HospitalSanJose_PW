@@ -11,7 +11,11 @@ namespace HospitalSanJose.Functions
 
             return await Get<IEnumerable<Doctor>>($"{ControllerUrl}");
         }
+        public async Task<IEnumerable<Doctor>> GetDoctorsWithRemainingDepartments()
+        {
 
+            return await Get<IEnumerable<Doctor>>($"{ControllerUrl}/DoctorsWithRemainingDepartments");
+        }
         public async Task<Doctor?> GetById(int? id)
         {
 

@@ -113,8 +113,26 @@ namespace HospitalSanJoseAPI.Controllers
 
                 return NotFound();
         }
+        // GET: api/Users/5
+        [HttpGet("ByDoctorId/{id}")]
+        public async Task<ActionResult<HospitalSanJoseModel.User>> GetUserByDoctorId(int id)
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var doctor = await _context.Doctors.FindAsync(id);
+            var user = _mapper.Map<HospitalSanJoseModel.User>(await _context.Users.FindAsync(doctor.UserId));
 
-       
+            if (user != null)
+            {
+                return Ok(user);
+            }
+
+            return NotFound();
+        }
+
+
         //// PUT: api/Users/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

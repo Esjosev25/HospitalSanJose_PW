@@ -119,6 +119,14 @@ namespace HospitalSanJose.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-      
+        [HttpPost]
+        public async Task<JsonResult> GetAvailableDepartmentsForDoctorJson()
+        {
+
+            int doctorId = Convert.ToInt32(HttpContext.Request.Form["doctorId"].FirstOrDefault().ToString());
+            var departments = await _departmentsService.GetAvailableDepartmentsForDoctor(doctorId);
+
+            return Json(departments);
+        }
     }
 }

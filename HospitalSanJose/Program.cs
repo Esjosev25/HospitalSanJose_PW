@@ -27,6 +27,7 @@ builder.Services.AddTransient<RolesService>();
 builder.Services.AddTransient<UserRolesService>();                 
 builder.Services.AddTransient<DepartmentsService>();
 builder.Services.AddTransient<DoctorsService>();
+builder.Services.AddTransient<DoctorDepartmentsService>();
 
 
 

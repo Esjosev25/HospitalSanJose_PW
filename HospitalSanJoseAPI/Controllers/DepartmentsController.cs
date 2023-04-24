@@ -15,7 +15,7 @@ namespace HospitalSanJoseAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class DepartmentsController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -35,6 +35,20 @@ namespace HospitalSanJoseAPI.Controllers
                 return NotFound();
             }
             var departments = _mapper.Map<IEnumerable<HospitalSanJoseModel.Department>>(await _context.Departments.ToListAsync());
+            return Ok(departments);
+        }
+        // GET: api/Departments/AvailableDepartmentsForDoctor
+        [HttpGet("AvailableDepartmentsForDoctor/{doctorId}")]
+        public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.Department>>> GetAvailableDepartmentsForDoctor(int? doctorId)
+        {
+            if (_context.Departments == null)
+            {
+                return NotFound();
+            }
+            var departmentsId =(await _context.DoctorDepartments.Where(dd=>dd.DoctorId==doctorId).Select(dd=>dd.DepartmentId).ToListAsync());
+            var departments = _mapper.Map<IEnumerable<HospitalSanJoseModel.Department>>(await _context.Departments.Where(d => !departmentsId.Contains(d.Id)).ToListAsync());
+
+
             return Ok(departments);
         }
 

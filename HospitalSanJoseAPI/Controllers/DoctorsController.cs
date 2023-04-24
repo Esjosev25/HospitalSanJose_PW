@@ -5,12 +5,14 @@ using AutoMapper;
 using DTO = HospitalSanJoseModel.DTO.Doctor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+
 
 namespace HospitalSanJoseAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    
     public class DoctorsController : ControllerBase
     {
         private readonly HospitalDbContext _context;
@@ -31,6 +33,29 @@ namespace HospitalSanJoseAPI.Controllers
                 return NotFound();
             }
             var doctors = _mapper.Map<IEnumerable<HospitalSanJoseModel.Doctor>>(await _context.Doctors.Include(u => u.User).ToListAsync());
+            return Ok(doctors);
+        }
+
+        // GET: api/Doctors
+        [HttpGet("DoctorsWithRemainingDepartments")]
+        public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.Doctor>>> GetDoctorsWithRemainingDepartments()
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var countDepartments = await _context.Departments.CountAsync();
+
+            var doctorsId = (await (from doctor in _context.Doctors
+                                    join user in _context.Users
+                                    on doctor.UserId equals user.Id
+                                    join DoctorDepartment in _context.DoctorDepartments
+                                    on doctor.Id equals DoctorDepartment.DoctorId into DoctorDepartments
+                                    from department in DoctorDepartments.DefaultIfEmpty()
+                                    group department by doctor into doctorGroup
+                                    where doctorGroup.Count() < countDepartments
+                                    select doctorGroup.Key.UserId).ToListAsync());
+            var doctors = _mapper.Map<IEnumerable<HospitalSanJoseModel.Doctor>>(await _context.Doctors.Include(u => u.User).Where(d => doctorsId.Contains(d.UserId) && !d.User.Deleted).ToListAsync());
             return Ok(doctors);
         }
 

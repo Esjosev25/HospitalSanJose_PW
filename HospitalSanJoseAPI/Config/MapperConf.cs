@@ -38,7 +38,11 @@ namespace HospitalSanJose.Config
             CreateMap<HospitalSanJoseModel.Doctor, Doctor>().ReverseMap();
             CreateMap<DTO.Doctor.DoctorCreate, Doctor>().ReverseMap();
             #endregion
+            #region "DoctorDepartment"
 
+            CreateMap<HospitalSanJoseModel.DoctorDepartment, DoctorDepartment>().ReverseMap();
+            CreateMap<DTO.DoctorDepartment.DoctorDepartmentCreate, DoctorDepartment>().ReverseMap();
+            #endregion
         }
     }
 }
