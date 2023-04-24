@@ -3,72 +3,83 @@
 @{
     ViewData["Title"] = "Create";
 }
+<div class="card p-3">
 
-<h1>Create</h1>
 
-<h4>DoctorDepartment</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="d-flex justify-content-between">
+        <h3>Asigar Departamentos a Doctor</h3>
+        <a class="align-self-end" href="@Url.Action("Index","DoctorDepartments")">Regresar </a>
+    </div>
 
-            <div class="row mb-3">
-                <input type="hidden" asp-for="Doctor.UserId" />
-                <label asp-for="Doctor.User.Username" class="col-md-4 col-lg-3 col-form-label"></label>
-                <div class="col-md-8 col-lg-9">
+    <hr />
+    <div class="row">
+        @if (Model.Doctors != null && Model.Doctors.Count > 0)
+        {
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                    <select asp-for="DoctorId"
-                            asp-items="@Model.Doctors"
-                            class="form-control"
-                            onchange="UserChanged()"></select>
-                    <span asp-validation-for="Doctor.User" class="text-danger"></span>
-                </div>
+                    <div class="row mb-3">
+                        <input type="hidden" asp-for="Doctor.UserId" />
+                        <label asp-for="Doctor.User.Username" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+
+                            <select asp-for="DoctorId"
+                                asp-items="@Model.Doctors"
+                                    class="form-control"
+                                    onchange="UserChanged()"></select>
+                            <span asp-validation-for="Doctor.User" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label asp-for="Doctor.User.FirstName" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="Doctor.User.FirstName" class="form-control" disabled />
+
+                        </div>
+
+                    </div>
+                    <div class="row mb-3">
+                        <label asp-for="Doctor.User.LastName" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="Doctor.User.LastName" class="form-control" disabled />
+
+                        </div>
+
+                    </div>
+                    <div class="row mb-3">
+                        <label asp-for="Doctor.User.Email" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="Doctor.User.Email" class="form-control" disabled />
+
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="DepartmentId" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+
+                            <select asp-for="DepartmentId" class="form-control" asp-items="@Model.Departments"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-            <div class="row mb-3">
-                <label asp-for="Doctor.User.FirstName" class="col-md-4 col-lg-3 col-form-label"></label>
-                <div class="col-md-8 col-lg-9">
-                    <input asp-for="Doctor.User.FirstName" class="form-control" disabled />
-
-                </div>
-
-            </div>
-            <div class="row mb-3">
-                <label asp-for="Doctor.User.LastName" class="col-md-4 col-lg-3 col-form-label"></label>
-                <div class="col-md-8 col-lg-9">
-                    <input asp-for="Doctor.User.LastName" class="form-control" disabled />
-
-                </div>
-
-            </div>
-            <div class="row mb-3">
-                <label asp-for="Doctor.User.Email" class="col-md-4 col-lg-3 col-form-label"></label>
-                <div class="col-md-8 col-lg-9">
-                    <input asp-for="Doctor.User.Email" class="form-control" disabled />
-
-                </div>
-
-            </div>
-
-            <div class="row mb-3">
-                <label asp-for="DepartmentId" class="col-md-4 col-lg-3 col-form-label"></label>
-                <div class="col-md-8 col-lg-9">
-
-                    <select asp-for="DepartmentId" class="form-control" asp-items="@Model.Departments"></select>
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        }
+        else
+        {
+            <p class="lead text-center">Todos los doctores tienen departamentos asociado</p>
+        }
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     <script src="~/js/DoctorDepartmentCreate.js"></script>
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
