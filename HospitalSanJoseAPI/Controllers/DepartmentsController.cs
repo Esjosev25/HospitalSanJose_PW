@@ -37,6 +37,27 @@ namespace HospitalSanJoseAPI.Controllers
             var departments = _mapper.Map<IEnumerable<HospitalSanJoseModel.Department>>(await _context.Departments.ToListAsync());
             return Ok(departments);
         }
+
+        // GET: api/Departments
+        [HttpGet("AssignedDepartments")]
+        public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.Department>>> GetAssignedDepartments()
+        {
+            if (_context.Departments == null)
+            {
+                return NotFound();
+            }
+            
+            var departments = _mapper.Map<IEnumerable<HospitalSanJoseModel.Department>>(await _context.DoctorDepartments
+        .GroupBy(dd => dd.DepartmentId)
+        .Where(g => g.Count() > 0)
+        .Select(g => g.Key)
+        .Join(_context.Departments, dd => dd, d => d.Id, (dd, d) => d).ToListAsync());
+
+
+
+            return Ok(departments);
+        }
+
         // GET: api/Departments/AvailableDepartmentsForDoctor
         [HttpGet("AvailableDepartmentsForDoctor/{doctorId}")]
         public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.Department>>> GetAvailableDepartmentsForDoctor(int? doctorId)

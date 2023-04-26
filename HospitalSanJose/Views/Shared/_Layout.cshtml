@@ -285,25 +285,28 @@
                     class="nav-content collapse"
                     data-bs-parent="#sidebar-nav">
                     <li>
-                        <a href="forms-elements.html">
+                        <a href="@Url.Action("AppointmentsByPacient","Appointments")">
                             <i class="bi bi-circle"></i><span>Mis Citas</span>
                         </a>
                     </li>
                     @if (admin || secretaria || doctor)
                     {
                         <li>
-                            <a href="forms-layouts.html">
+                            <a href="@Url.Action("Index","Appointments")">
                                 <i class="bi bi-circle"></i><span>Administrar Citas</span>
                             </a>
                         </li>
                         <li>
-                            <a href="forms-editors.html">
+                            <a href="@Url.Action("Create","Appointments")">
                                 <i class="bi bi-circle"></i><span>Crear Citas</span>
                             </a>
                         </li>
+                    }
+                    @if (doctor)
+                    {
                         <li>
-                            <a href="forms-validation.html">
-                                <i class="bi bi-circle"></i><span>Form Validation</span>
+                            <a href="@Url.Action("AppointmentsByDoctor","Appointments")">
+                                <i class="bi bi-circle"></i><span>Mis Citas Agendadas</span>
                             </a>
                         </li>
                     }

@@ -10,6 +10,11 @@ namespace HospitalSanJose.Functions
 
             return await Get<IEnumerable<Department>>($"{ControllerUrl}");
         }
+        public async Task<IEnumerable<Department>> GetAssignedList()
+        {
+
+            return await Get<IEnumerable<Department>>($"{ControllerUrl}/AssignedDepartments");
+        }
         public async Task<IEnumerable<Department>> GetAvailableDepartmentsForDoctor(int? doctorId)
         {
 

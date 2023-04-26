@@ -145,5 +145,16 @@ namespace HospitalSanJose.Controllers
             await _doctorsService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
+ 
+        [HttpPost]
+        public async Task<JsonResult> GetDoctorsByDepartmentJson()
+        {
+
+            int departmentId = Convert.ToInt32(HttpContext.Request.Form["departmentId"].FirstOrDefault().ToString());
+            var departments = await _doctorsService.GetListByDepartmentId(departmentId);
+
+            var jsonresult = departments ;
+            return Json(jsonresult);
+        }
     }
 }

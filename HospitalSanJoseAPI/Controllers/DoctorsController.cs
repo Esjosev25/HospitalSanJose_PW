@@ -58,7 +58,18 @@ namespace HospitalSanJoseAPI.Controllers
             var doctors = _mapper.Map<IEnumerable<HospitalSanJoseModel.Doctor>>(await _context.Doctors.Include(u => u.User).Where(d => doctorsId.Contains(d.UserId) && !d.User.Deleted).ToListAsync());
             return Ok(doctors);
         }
-
+        // GET: api/Doctors
+        [HttpGet("DoctorsByDepartment/{departmentId}")]
+        public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.Doctor>>> GeDoctorsByDepartment(int departmentId)
+        {
+            if (_context.Doctors == null)
+            {
+                return NotFound();
+            }
+            var doctors = _mapper.Map<IEnumerable<HospitalSanJoseModel.Doctor>>(await _context.DoctorDepartments.Where(dd=> dd.DepartmentId == departmentId).Include(d=>d.Doctor).ThenInclude(u=>u.User).Select(dd=>dd.Doctor).ToListAsync());
+            
+            return Ok(doctors);
+        }
         // GET: api/Doctors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<HospitalSanJoseModel.Doctor>> GetDoctor(int id)

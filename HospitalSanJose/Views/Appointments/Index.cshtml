@@ -1,0 +1,58 @@
+﻿@model IEnumerable<HospitalSanJoseModel.Appointment>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="card p-3">
+<div class="d-flex justify-content-between">
+    <h3>Citas</h3>
+    <a class="btn btn-primary d-flex align-self-end" asp-action="Create"> + Crear Cita</a>
+
+</div>
+
+<hr />
+<table class="table table-striped">
+    <thead>
+        <tr>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.Doctor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AppointmentDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AppointmentTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            
+            <td>
+                    @item.Doctor.User.FirstName @item.Doctor.User.LastName (@item.Doctor.User.Username)
+            </td>
+            <td>
+                    @item.User.FirstName @item.User.LastName (@item.User.Username)
+            </td>
+                <td>
+                    @item.AppointmentDate.ToString("dd'/'MM'/'yyyy")
+                    
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AppointmentTime)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id"><i class="btn bi bi-card-text"></i></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="btn bi bi-trash3"></i></a>
+                </td>
+        </tr>
+}
+    </tbody>
+</table>
+</div>

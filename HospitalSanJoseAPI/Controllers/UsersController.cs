@@ -12,7 +12,7 @@ namespace HospitalSanJoseAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UsersController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -94,7 +94,20 @@ namespace HospitalSanJoseAPI.Controllers
 
             return Ok(nonDoctorUsers);
         }
+        // GET: api/Users
+        [HttpGet("Pacients")]
+        public async Task<ActionResult<IEnumerable<HospitalSanJoseModel.User>>> GetPacientUsers()
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var usersId = await _context.Users.Where(u=>!u.Deleted && !u.IsLocked).Select(u=>u.Id).ToListAsync();
 
+            var pacientRole = await _context.Roles.Where(r => r.Name == Utils.Roles.RolesType.Paciente.ToString()).FirstOrDefaultAsync();
+            var users = _mapper.Map<IEnumerable<HospitalSanJoseModel.User>>(await _context.UserRoles.Include(ur => ur.User).Where(ur => ur.RoleId == pacientRole.Id && usersId.Contains(ur.UserId)).Select(ur=>ur.User).ToListAsync());
+            return Ok(users);
+        }
 
         // GET: api/Users/5
         [HttpGet("{id}")]

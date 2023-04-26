@@ -1,0 +1,88 @@
+﻿@model HospitalSanJoseModel.DTO.Appointment.AppointmentCreate
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div class="card p-3">
+    <div class="d-flex justify-content-between">
+        <h3>Agregar Doctor</h3>
+        <a class="align-self-end"  href="@Url.Action("Dashboard","Auth")">Regresar </a>
+    </div>
+    <hr />
+
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row mb-3">
+                <label for="DepartmentId" class="col-md-6 col-lg-4 col-form-label">Departamento</label>
+                <div class="col-md-6 col-lg-8">
+
+                        <select asp-for="DepartmentId" class="form-control" onchange="DepartmentChanged()" asp-items="@Model.Departments"></select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <input type="hidden" asp-for="Doctor.UserId" />
+                <label asp-for="Doctor" class="col-md-6 col-lg-4 col-form-label"></label>
+                <div class="col-md-6 col-lg-8">
+
+                    <select asp-for="DoctorId"
+                            asp-items="@Model.Doctors"
+                            class="form-control"
+                                onchange="DateTimeChange()"></select>
+                    <span asp-validation-for="Doctor.User" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label asp-for="User" class="col-md-6 col-lg-4 col-form-label"></label>
+                <div class="col-md-6 col-lg-8">
+
+                    <select asp-for="UserId"
+                            asp-items="@Model.Users"
+                            class="form-control"></select>
+                </div>
+            </div>
+                <div class="row mb-3">
+                    <label asp-for="AppointmentDate" class="col-md-6 col-lg-4 col-form-label"></label>
+                    <div class="col-md-6 col-lg-8">
+                        <input asp-for="AppointmentDate" type="date" onchange="DateTimeChange()"  class="form-control" />
+                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                    </div>
+            </div>
+                <div class="row mb-3">
+                    
+                    <label asp-for="AppointmentTime" class="col-md-6 col-lg-4 col-form-label"></label>
+                    <div class="col-md-6 col-lg-8">
+
+                        <select asp-for="AppointmentTime"
+                                asp-items="@Model.AvailableHours"
+                                class="form-control"
+                                ></select>
+                        <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                    </div>
+                </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="~/js/sweetAlert.js"></script>
+@section Scripts {
+    <script src="~/js/AppointmentCreate.js"></script>
+
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+@if (Model != null && Model.Response != null )
+{
+    <script>
+        showAlert('@Model.Response.AlertTitle', '@Model.Response.AlertMessage', '@Model.Response.AlertIcon', false, 'Aceptar').then(confirmed => confirmed && console.log('Work!'));
+    </script>
+}

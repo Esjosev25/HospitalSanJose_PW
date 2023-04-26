@@ -1,0 +1,46 @@
+﻿@model HospitalSanJoseModel.Appointment
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div class="card p-3">
+    <div class="d-flex justify-content-between">
+        <h3>Detalles de la Cita</h3>
+        <a class="align-self-end" role="button" onclick="window.history.back()">Regresar </a>
+    </div>
+
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AppointmentDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AppointmentDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AppointmentTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.AppointmentDate.ToString("dd'/'MM'/'yyyy")
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Doctor)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Doctor.User.FirstName @Model.Doctor.User.LastName (@Model.Doctor.User.Username)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.User)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.User.FirstName @Model.User.LastName (@Model.User.Username)
+        </dd>
+    </dl>
+    <div>
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.Id">Editar Cita</a>
+    </div>
+</div>
+

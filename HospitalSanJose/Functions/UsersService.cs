@@ -28,6 +28,10 @@ namespace HospitalSanJose.Functions
             var param = Id != null ? $"?id={Id}" : "";
             return await Get<IEnumerable<User>>($"{ControllerUrl}/InactiveUsers{param}");
         }
+        public async Task<IEnumerable<User>> GetPacients()
+        {
+            return await Get<IEnumerable<User>>($"{ControllerUrl}/Pacients");
+        }
 
         public async Task<User?> GetById(int? id)
         {
