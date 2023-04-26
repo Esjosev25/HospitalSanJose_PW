@@ -11,11 +11,14 @@ using DTO = HospitalSanJoseModel.DTO.Appointment;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Globalization;
 using NuGet.Packaging.Signing;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSanJoseAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AppointmentsController : ControllerBase
     {
         private readonly HospitalDbContext _context;

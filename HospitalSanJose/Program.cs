@@ -1,6 +1,7 @@
 
 using HospitalSanJose.Config;
 using HospitalSanJose.Functions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -16,18 +17,38 @@ builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromSeconds(3600);
     options.Cookie.HttpOnly = true;
+    options.Cookie.Name = "HospitalSanJose.Session";
     options.Cookie.IsEssential = true;
 });
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllOrigins",
+        builder =>
+        {
+            builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
+        });
+});
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+               .AddCookie(options =>
+               {
+                   options.Cookie.SameSite = SameSiteMode.None;
+                   options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                   options.LoginPath = "/Auth/Login"; /*this option indicates where is the login page*/
+               });
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddTransient<AuthService>();
 builder.Services.AddTransient<UsersService>();
 builder.Services.AddTransient<PersonalInfosService>();
 builder.Services.AddTransient<RolesService>();
-builder.Services.AddTransient<UserRolesService>();                 
+builder.Services.AddTransient<UserRolesService>();
 builder.Services.AddTransient<DepartmentsService>();
 builder.Services.AddTransient<DoctorsService>();
 builder.Services.AddTransient<DoctorDepartmentsService>();
+builder.Services.AddTransient<AppointmentsService>();
 
 
 
@@ -46,9 +67,10 @@ app.UseStaticFiles();
 
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -65,9 +87,9 @@ app.Use(async (context, next) =>
     {
         var name = context.Session.GetString("Username");
         var userId = context.Session.GetInt32("UserId");
-        var token= context.Session.GetInt32("Token");
+        var token = context.Session.GetInt32("Token");
         var roles = context.Session.GetString("Roles");
-        if (name == null || userId == null|| token == null || roles == null)
+        if (name == null || userId == null || token == null || roles == null)
         {
             context.Response.Redirect("/auth/login");
         }

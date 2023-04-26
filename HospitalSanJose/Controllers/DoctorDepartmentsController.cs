@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HospitalSanJose.Functions;
 using HospitalSanJoseModel.DTO.DoctorDepartment;
 using HospitalSanJoseModel.DTO.UserRoles;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HospitalSanJoseAPI.Controllers
 {
+    [Authorize]
     public class DoctorDepartmentsController : Controller
     {
 

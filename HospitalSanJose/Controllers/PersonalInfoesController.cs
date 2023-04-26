@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HospitalSanJoseModel;
 using HospitalSanJose.Functions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSanJose.Controllers
 {
+    [Authorize]
     public class PersonalInfoesController : Controller
     {
         private readonly PersonalInfosService _personalInfoService;

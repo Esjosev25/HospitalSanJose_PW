@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HospitalSanJoseModel;
 using HospitalSanJose.Functions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSanJose.Controllers
 {
+        [Authorize]
     public class UsersController : Controller
     {
-
         private readonly UsersService _userService;
         public UsersController(UsersService userService)
         {

@@ -2,6 +2,11 @@
 using HospitalSanJoseModel.DTO.Auth;
 using HospitalSanJose.Functions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.Win32;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSanJose.Controllers
 {
@@ -27,6 +32,7 @@ namespace HospitalSanJose.Controllers
         {
             return View("Register");
         }
+        [Authorize]
         [Route("dashboard")] 
         public async Task<IActionResult> Dashboard()
         {
@@ -37,9 +43,10 @@ namespace HospitalSanJose.Controllers
 
 
         [Route("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync();
             return RedirectToAction("Login");
         }
 
@@ -64,6 +71,14 @@ namespace HospitalSanJose.Controllers
             if (roles == "")
                 return RedirectToAction("logout");
             HttpContext.Session.SetString("Roles", roles);
+            var claims = new List<Claim>
+            {
+                    new Claim("Username", login.Username),
+                    new Claim("TokenAPI", response.Token)
+                };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            await HttpContext.SignInAsync(claimsPrincipal);
             return RedirectToAction("Index", "Dashboard");
 
         }
@@ -82,7 +97,7 @@ namespace HospitalSanJose.Controllers
             HttpContext.Response.Cookies.Append("loggedIn", "true");
             HttpContext.Session.SetString("Username", register.Username);
             HttpContext.Session.SetInt32("UserId", (int)response.UserId!);
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("Auth", "Login");
 
         }
 

@@ -1,12 +1,13 @@
 ﻿using HospitalSanJose.Functions;
 using HospitalSanJoseModel.DTO.Appointment;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace HospitalSanJose.Controllers
 {
+    [Authorize]
     public class AppointmentsController : Controller
     {
         private readonly AppointmentsService _appointmentsService;

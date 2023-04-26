@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using AutoMapper;
 using HospitalSanJoseModel.DTO.UserRoles;
 using HospitalSanJose.Functions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSanJose.Controllers
 {
-
+    [Authorize]
     public class UserRolesController : Controller
     {
 

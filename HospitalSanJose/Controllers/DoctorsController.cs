@@ -6,9 +6,11 @@ using HospitalSanJose.Functions;
 using HospitalSanJoseModel.DTO.UserRoles;
 using HospitalSanJoseModel.DTO.Doctor;
 using HospitalSanJoseModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSanJose.Controllers
 {
+    [Authorize]
     public class DoctorsController : Controller
     {
         private readonly DoctorsService _doctorsService;

@@ -3,11 +3,13 @@ using Azure;
 using HospitalSanJose.Functions;
 using HospitalSanJoseModel;
 using HospitalSanJoseModel.DTO.Profile;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HospitalSanJose.Controllers
 {
+    [Authorize]
     public class ProfileController : Controller
     {
         private readonly IMapper _mapper;

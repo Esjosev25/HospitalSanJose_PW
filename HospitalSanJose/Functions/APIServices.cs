@@ -11,7 +11,8 @@ namespace HospitalSanJose.Functions
     {
 
         protected readonly int Timeout = 30;
-        private readonly string Url = "https://localhost:7256/";
+        private readonly string Url = "https://localhost/HospitalSanJoseAPI/";
+        //private readonly string Url = "https://localhost:7256/";
         private readonly HttpStatusCode[] ErrorCodes = { HttpStatusCode.InternalServerError, HttpStatusCode.Unauthorized};
         private readonly IHttpContextAccessor _accessor;
 

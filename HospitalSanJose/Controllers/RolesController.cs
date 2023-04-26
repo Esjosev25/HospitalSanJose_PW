@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HospitalSanJose.Functions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSanJose.Controllers
 {
+    [Authorize]
     public class RolesController : Controller
     {
 

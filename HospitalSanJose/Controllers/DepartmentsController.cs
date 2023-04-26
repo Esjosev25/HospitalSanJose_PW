@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HospitalSanJose.Functions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalSanJose.Controllers
 {
+        [Authorize]
     public class DepartmentsController : Controller
     {
-        
         private readonly DepartmentsService _departmentsService;
         public DepartmentsController(DepartmentsService deparmentsService)
         {
